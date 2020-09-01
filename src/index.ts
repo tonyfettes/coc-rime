@@ -4,8 +4,7 @@ import { TextDocument, Position, CancellationToken, CompletionList, CompletionIt
 import { ChildProcess, spawn } from 'child_process'
 import { ReadLine, createInterface } from 'readline'
 import { Mutex } from 'await-semaphore'
-import DemoList from './lists';
-import {stdin} from 'process';
+//import DemoList from './lists';
 
 class RimeCLI {
   private childDead: boolean
@@ -20,7 +19,7 @@ class RimeCLI {
     this.childDead = false
   }
 
-  public async request(any_request: any): Promise<any> {
+  public async request(any_request: any): Promise<string[]> {
     const release = await this.mutex.acquire()
     try {
       return await this.requestUnlocked(any_request)
@@ -29,7 +28,7 @@ class RimeCLI {
     }
   }
 
-  private requestUnlocked(any_request: any): Promise<any> {
+  private requestUnlocked(any_request: any): Promise<string[]> {
     const request = JSON.stringify(any_request) + '\n'
     return new Promise<any>((resolve, reject) => {
       try {
@@ -48,18 +47,6 @@ class RimeCLI {
               candidateItems.push(item.text)
             }
             resolve(candidateItems)
-            /*
-            resolve({
-              items: completionItems.map(singleItem => {
-                return {
-                  word: "a" + singleItem
-                }
-              })
-            })
-            */
-            /*
-            resolve(any_response)
-            */
           }
         })
         this.proc.stdin.write(request, "utf8")
@@ -108,10 +95,7 @@ class RimeCLI {
   }
 }
 
-const CHAR_LIMIT = 100000
-
-//export async function activate(context: ExtensionContext): Promise<void> {
-export function activate(context: ExtensionContext): void {
+export async function activate(context: ExtensionContext): Promise<void> {
   workspace.showMessage(`coc-rime works!`);
 
   function makeCompletionItem(preedit: string, candidate: string): CompletionItem {
@@ -128,29 +112,6 @@ export function activate(context: ExtensionContext): void {
     async provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): Promise<CompletionList | undefined | null> {
       try {
         const rimeCLI = new RimeCLI("/usr/bin/rime-cli")
-        /*
-        const curln = document.getText(Range.create({
-          line: position.line,
-          character: 0,
-        }, {
-          line: position.line,
-          character: CHAR_LIMIT,
-        }))
-        let prefix = position.character - 1
-        let acceptCharset = "'abcdefghijklmnopqrstuvwxyz"
-        while (prefix > 0 && acceptCharset.includes(curln.charAt(prefix))) {
-          prefix--
-        }
-        let suffix = position.character - 1
-        while (suffix < curln.length && acceptCharset.includes(curln.charAt(suffix))) {
-          suffix++
-        }
-        */
-        workspace.showMessage(context.option.input)
-        //prefix = Math.max(0, prefix)
-        //workspace.showMessage('charAt(' + prefix.toString() + '): ' + curln.charAt(prefix) + ', charAt(' + suffix.toString() + '):' + curln.charAt(suffix))
-        //workspace.showMessage(prefix.toString() + ' ' + suffix.toString())
-        //workspace.showMessage(curln.slice(prefix, suffix - 1))
         let req = undefined
         for (const singleChar of context.option.input) {
           req = rimeCLI.request({
@@ -159,18 +120,6 @@ export function activate(context: ExtensionContext): void {
           })
         }
         const res: string[] = await req
-        //workspace.showMessage(items)
-        /*
-        return res.map(candidate => {
-          //return makeCompletionItem(curln.slice(prefix, suffix - 1), candidate)
-          return {
-            label: candidate,
-            sortText: curln.slice(prefix, suffix - 1),
-            filterText: curln.slice(prefix, suffix - 1),
-            insertText: candidate,
-          }
-        })
-        */
         let completionItems: CompletionList = {
           items: res.map(candidate => {
             return {
@@ -188,116 +137,4 @@ export function activate(context: ExtensionContext): void {
       }
     }
   }, [], 99))
-
-  /*
-  context.subscriptions.push(
-    commands.registerCommand('coc-rime.Command', async () => {
-      workspace.showMessage(`coc-rime Commands works!`);
-    }),
-
-    listManager.registerList(new DemoList(workspace.nvim)),
-
-    sources.createSource({
-      name: 'rime', // unique id
-      shortcut: '[IM]', // [CS] is custom source
-      priority: 99,
-      triggerPatterns: [], // RegExp pattern
-      firstMatch: false,
-      doComplete: async function (opt) {
-        if (!opt.input) {
-          return null
-        }
-        const tItems = await getCompletionItems(opt.input);
-        workspace.showMessage(tItems);
-        return {
-          items: tItems.map(singleItem => {
-            return {
-              //word: opt.input + singleItem,
-              word: opt.input,
-              //word: singleItem,
-              //word: '',
-              abbr: singleItem,
-              menu: singleItem,
-              dup: 1,
-              empty: 1,
-              equal: 1,
-            }
-          }),
-        }
-      },
-    }),
-
-    workspace.registerKeymap(
-      ['n'],
-      'coc-rime-keymap',
-      async () => {
-        workspace.showMessage(`registerKeymap`);
-      },
-      { sync: false }
-    ),
-
-    workspace.registerAutocmd({
-      event: 'InsertLeave',
-      request: true,
-      callback: () => {
-        workspace.showMessage(`registerAutocmd on InsertLeave`);
-      },
-    })
-  );
-  */
 }
-
-/*
-async function getRimeResponse(document: TextDocument, position: Position): Promise<any> {
-  const rimeCLI = new RimeCLI("/usr/bin/rime-cli")
-  const curln = document.getText(Range.create({
-    line: position.line,
-    character: 0,
-  }, {
-    line: position.line,
-    character: CHAR_LIMIT,
-  }))
-  let prefix = position.character
-  let acceptCharset = "'abcdefghijklmnopqrstuvwxyz"
-  while (prefix >= 0 && acceptCharset.includes(curln.charAt(prefix))) {
-    prefix--
-  }
-  let suffix = position.character + 1
-  while (suffix < curln.length && acceptCharset.includes(curln.charAt(suffix))) {
-    suffix++
-  }
-  let res = undefined
-  for (let singleChar of curln.slice(prefix + 1, suffix - 1)) {
-    res = rimeCLI.request({
-      keysym: singleChar.charCodeAt(0),
-      modifiers: 0
-    })
-  }
-  return res
-}
-*/
-
-//async function getCompletionItems(input:string): Promise<any> {
-//  const rimeCLI = new RimeCLI("/usr/bin/rime-cli")
-//  let res = undefined
-//  for (let singleChar of input) {
-//    res = rimeCLI.request({
-//      keysym: singleChar.charCodeAt(0),
-//      modifiers: 0
-//    })
-//  }
-//  return res
-//}
-//async function getCompletionItems(): Promise<CompleteResult> {
-//  return {
-//    items: [
-//      {
-//        //word: 'TestCompletionItem 1',
-//        word: 'a啊',
-//      },
-//      {
-//        word: 'a嗄',
-//      },
-//    ],
-//  };
-//}
