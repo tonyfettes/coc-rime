@@ -95,41 +95,38 @@ class RimeCLI {
   }
 }
 
-export async function activate(context: ExtensionContext): Promise<void> {
+//export async function activate(context: ExtensionContext): Promise<void> {
+export function activate(context: ExtensionContext): void {
   workspace.showMessage(`coc-rime works!`);
-
-  function makeCompletionItem(preedit: string, candidate: string): CompletionItem {
-    let item: CompletionItem = {
-      label: candidate,
-      sortText: preedit,
-      filterText: preedit,
-      insertText: candidate,
-    }
-    return item
-  }
 
   context.subscriptions.push(languages.registerCompletionItemProvider('rime', 'IM', null, {
     async provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): Promise<CompletionList | undefined | null> {
       try {
         const rimeCLI = new RimeCLI("/usr/bin/rime-cli")
         let req = undefined
+        const acceptCharset = "'abcdefghijklmnopqrstuvwxyz"
+        let preEdit: string = ''
         for (const singleChar of context.option.input) {
-          req = rimeCLI.request({
-            keysym: singleChar.charCodeAt(0),
-            modifiers: 0
-          })
+          if (acceptCharset.includes(singleChar)) {
+            req = rimeCLI.request({
+              keysym: singleChar.charCodeAt(0),
+              modifiers: 0
+            })
+          } else {
+            preEdit += singleChar
+          }
         }
         const res: string[] = await req
         let completionItems: CompletionList = {
           items: res.map(candidate => {
             return {
-              label: candidate,
+              label: preEdit + candidate,
               sortText: context.option.input,
               filterText: context.option.input,
-              insertText: candidate
+              insertText: preEdit + candidate
             }
           }),
-          isIncomplete: context.option.input.length <= 3
+          isIncomplete: context.option.input.length <= 3,
         }
         return completionItems
       } catch(e) {
