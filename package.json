@@ -36,6 +36,8 @@
     "rimraf": "^3.0.2",
     "ts-loader": "^8.0.2",
     "typescript": "^3.9.7",
+    "vscode-languageserver-protocol": "^3.14.1",
+    "vscode-languageserver-types": "^3.14.0",
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12"
   },
