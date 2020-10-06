@@ -1,10 +1,15 @@
 //import { commands, CompleteResult, ExtensionContext, listManager, sources, workspace } from 'coc.nvim';
-import { commands, ExtensionContext, listManager, sources, CompletionContext, workspace, languages } from 'coc.nvim';
-import { TextDocument, Position, CancellationToken, CompletionList, CompletionItem, Range } from 'vscode-languageserver-protocol'
-import { ChildProcess, spawn } from 'child_process'
-import { ReadLine, createInterface } from 'readline'
-import { Mutex } from 'await-semaphore'
+import {commands, ExtensionContext, listManager, sources, CompletionContext, workspace, languages} from 'coc.nvim';
+import {TextDocument, Position, CancellationToken, CompletionList, CompletionItem, Range} from 'vscode-languageserver-protocol'
+import {ChildProcess, spawn} from 'child_process'
+import {ReadLine, createInterface} from 'readline'
+import {Mutex} from 'await-semaphore'
 //import DemoList from './lists';
+
+interface RimeRequest {
+  keysym: number[],
+  modifiers: number
+}
 
 class RimeCLI {
   private childDead: boolean
@@ -19,17 +24,25 @@ class RimeCLI {
     this.childDead = false
   }
 
-  public async request(any_request: any): Promise<string[]> {
+  public async request(request_string: string): Promise<string[]> {
     const release = await this.mutex.acquire()
     try {
-      return await this.requestUnlocked(any_request)
+      // Group the input string into one request pack.
+      let grouped_request: RimeRequest = {
+        keysym: [],
+        modifiers: 0,
+      }
+      for (const singleChar of request_string) {
+        grouped_request.keysym.push(singleChar.charCodeAt(0));
+      }
+      // Send the request asynchronously.
+      return await this.requestUnlocked(grouped_request)
     } finally {
       release()
     }
   }
 
-  private requestUnlocked(any_request: any): Promise<string[]> {
-    const request = JSON.stringify(any_request) + '\n'
+  private requestUnlocked(grouped_request: RimeRequest): Promise<string[]> {
     return new Promise<any>((resolve, reject) => {
       try {
         if (!this.isChildAlive()) {
@@ -40,17 +53,20 @@ class RimeCLI {
         }
         this.rl.once('line', response => {
           let any_response: any = JSON.parse(response.toString())
-          let candidateItems = []
-          if (any_response === null || any_response === undefined) reject(null)
-          if ("menu" in any_response && "candidates" in any_response.menu) {
+          let candidateItems: string[] = []
+          if (any_response === null || any_response === undefined) {
+            resolve([])
+          } else if ("menu" in any_response && any_response.menu !== null && "candidates" in any_response.menu) {
             for (let item of any_response.menu.candidates) {
               candidateItems.push(item.text)
             }
             resolve(candidateItems)
+          } else {
+            resolve(candidateItems)
           }
         })
-        this.proc.stdin.write(request, "utf8")
-      } catch(e) {
+        this.proc.stdin.write(JSON.stringify(grouped_request) + '\n', "utf8")
+      } catch (e) {
         console.log(`Error interacting with rime-cli: ${e}`)
         reject(e)
       }
@@ -95,24 +111,21 @@ class RimeCLI {
   }
 }
 
+const rimeCLI = new RimeCLI("/usr/bin/rime-cli")
+
 //export async function activate(context: ExtensionContext): Promise<void> {
 export function activate(context: ExtensionContext): void {
-  workspace.showMessage(`coc-rime works!`);
+  //workspace.showMessage(`coc-rime works!`);
 
   context.subscriptions.push(languages.registerCompletionItemProvider('rime', 'IM', null, {
-    async provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): Promise<CompletionList | undefined | null> {
+    async provideCompletionItems(_document: TextDocument, _position: Position, _token: CancellationToken, context: CompletionContext): Promise<CompletionList | undefined | null> {
+      const SPACE_KEYSYM = 32
       try {
-        const rimeCLI = new RimeCLI("/usr/bin/rime-cli")
-        let req = undefined
-        const acceptCharset = "'abcdefghijklmnopqrstuvwxyz"
+        const req = rimeCLI.request("  " + context.option.input)
+        const acceptCharset = "'=-abcdefghijklmnopqrstuvwxyz"
         let preEdit: string = ''
         for (const singleChar of context.option.input) {
-          if (acceptCharset.includes(singleChar)) {
-            req = rimeCLI.request({
-              keysym: singleChar.charCodeAt(0),
-              modifiers: 0
-            })
-          } else {
+          if (!acceptCharset.includes(singleChar)) {
             preEdit += singleChar
           }
         }
@@ -129,9 +142,9 @@ export function activate(context: ExtensionContext): void {
           isIncomplete: context.option.input.length <= 3,
         }
         return completionItems
-      } catch(e) {
+      } catch (e) {
         console.log(`Error setting up request: ${e}`)
       }
     }
-  }, [], 99))
+  }, [], 1))
 }
