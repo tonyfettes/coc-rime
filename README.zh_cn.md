@@ -2,6 +2,8 @@
 
 Rime 输入法的 coc.nvim 集成
 
+![截图](https://user-images.githubusercontent.com/29998228/95216680-f1974680-0824-11eb-94cb-83a8d9a5b59d.gif)
+
 ## 使用方法
 
 先安装 [`rime-cli`](https://github.com/tonyfettes/rime-cli) 至 `/usr/bin/rime-cli`,

@@ -4,6 +4,8 @@ Rime input method integration of coc.nvim
 
 [中文 README](https://github.com/tonyfettes/coc-rime/blob/master/README.zh_cn.md)
 
+![screenshot](https://user-images.githubusercontent.com/29998228/95216680-f1974680-0824-11eb-94cb-83a8d9a5b59d.gif)
+
 ## Install
 
 First you need to install my version of [`rime-cli`](https://github.com/tonyfettes/rime-cli).
