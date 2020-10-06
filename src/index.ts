@@ -11,6 +11,12 @@ interface RimeRequest {
   modifiers: number
 }
 
+interface RimeCandidate {
+  text: string,
+  comment: string,
+  label: number,
+}
+
 class RimeCLI {
   private childDead: boolean
   private binaryPath?: string
@@ -24,7 +30,7 @@ class RimeCLI {
     this.childDead = false
   }
 
-  public async request(request_string: string): Promise<string[]> {
+  public async request(request_string: string): Promise<RimeCandidate[]> {
     const release = await this.mutex.acquire()
     try {
       // Group the input string into one request pack.
@@ -32,6 +38,8 @@ class RimeCLI {
         keysym: [],
         modifiers: 0,
       }
+      const KEYSYM_ESCAPE = 0xff1b;
+      grouped_request.keysym.push(KEYSYM_ESCAPE);
       for (const singleChar of request_string) {
         grouped_request.keysym.push(singleChar.charCodeAt(0));
       }
@@ -42,7 +50,7 @@ class RimeCLI {
     }
   }
 
-  private requestUnlocked(grouped_request: RimeRequest): Promise<string[]> {
+  private requestUnlocked(grouped_request: RimeRequest): Promise<RimeCandidate[]> {
     return new Promise<any>((resolve, reject) => {
       try {
         if (!this.isChildAlive()) {
@@ -58,7 +66,7 @@ class RimeCLI {
             resolve([])
           } else if ("menu" in any_response && any_response.menu !== null && "candidates" in any_response.menu) {
             for (let item of any_response.menu.candidates) {
-              candidateItems.push(item.text)
+              candidateItems.push(item)
             }
             resolve(candidateItems)
           } else {
@@ -119,9 +127,8 @@ export function activate(context: ExtensionContext): void {
 
   context.subscriptions.push(languages.registerCompletionItemProvider('rime', 'IM', null, {
     async provideCompletionItems(_document: TextDocument, _position: Position, _token: CancellationToken, context: CompletionContext): Promise<CompletionList | undefined | null> {
-      const SPACE_KEYSYM = 32
       try {
-        const req = rimeCLI.request("  " + context.option.input)
+        const req = rimeCLI.request(context.option.input)
         const acceptCharset = "'=-abcdefghijklmnopqrstuvwxyz"
         let preEdit: string = ''
         for (const singleChar of context.option.input) {
@@ -129,14 +136,14 @@ export function activate(context: ExtensionContext): void {
             preEdit += singleChar
           }
         }
-        const res: string[] = await req
+        const res: RimeCandidate[] = await req
         let completionItems: CompletionList = {
           items: res.map(candidate => {
             return {
-              label: preEdit + candidate,
-              sortText: context.option.input,
+              label: preEdit + candidate.text,
+              sortText: context.option.input + candidate.label.toString().padStart(8, "0"),
               filterText: context.option.input,
-              insertText: preEdit + candidate
+              insertText: preEdit + candidate.text,
             }
           }),
           isIncomplete: context.option.input.length <= 3,
