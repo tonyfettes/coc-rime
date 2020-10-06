@@ -4,25 +4,22 @@ Rime input method integration of coc.nvim
 
 ## Install
 
-Now please clone the repo and `yarn`.
+First you need to install my version of [`rime-cli`](https://github.com/tonyfettes/rime-cli).
 
-Maybe in the future, after we upload this plugin to the npm.
+You could clone the repo and `make` to get the binary file,
+or, if you use Arch Linux, you could use the `PKGBUILD` here.
 
-`:CocInstall coc-rime`
+For now, the only to install the plugin is to clone the repo and run `yarn`.
 
 ## Keymaps
 
 No keymaps for now, maybe in the future we could let
-user to use key to turn of the source for a moment.
-
-`nmap <silent> <C-l> <Plug>(coc-coc-rime-keymap)`
+user to turn of the source.
 
 ## Lists
 
 No List support now, but in the future we will add it to
 let user choose the input schema.
-
-`:CocList demo_list`
 
 ## License
 
