@@ -1,5 +1,5 @@
-import { BasicList, ListAction, ListContext, ListItem, Neovim, workspace } from 'coc.nvim'
-import {RimeSchema} from './rime'
+import {BasicList, ListAction, ListContext, ListItem, Neovim, workspace} from 'coc.nvim'
+import {RimeSchema, RimeCLI} from './rime'
 
 export default class SchemaList extends BasicList {
   public readonly name = 'rime_schema';
@@ -8,23 +8,27 @@ export default class SchemaList extends BasicList {
   public schemaList: RimeSchema[] = [];
   public actions: ListAction[] = [];
 
-  constructor(nvim: Neovim, schemaList: RimeSchema[]) {
+  private rimeCLI: RimeCLI;
+
+  constructor(nvim: Neovim, rimeCLI: RimeCLI) {
     super(nvim);
+    this.rimeCLI = rimeCLI;
     this.addAction('open', (item: ListItem) => {
       workspace.showMessage(`${item.label}, ${item.data.name}`);
-    });
+    })
   }
 
-  public async loadItems(context: ListContext): Promise<ListItem[]> {
-    return [
-      {
-        label: 'coc-rime list item 1',
-        data: {name: 'list item 1'},
-      },
-      {
-        label: 'coc-rime list item 2',
-        data: {name: 'list item 2'},
-      },
-    ];
+  public async loadItems(_context: ListContext): Promise<ListItem[]> {
+    return new Promise<ListItem[]>((resolve, _) => {
+      this.rimeCLI.requestSchemaList().then((res) => {
+        let listItems: ListItem[] = res.map(schema => {
+          return {
+            label: schema.name,
+            filterText: schema.name + schema.schemaId,
+          }
+        });
+        resolve(listItems)
+      })
+    });
   }
 }

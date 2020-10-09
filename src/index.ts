@@ -47,8 +47,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
         }
       })
     }
-  }, [], 1));
+  }, [], 1))
 
   // Schema List
-  listManager.registerList(new SchemaList(workspace.nvim, await rimeCLI.requestSchemaList()));
+  listManager.registerList(new SchemaList(workspace.nvim, rimeCLI));
 }
