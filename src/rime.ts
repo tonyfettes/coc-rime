@@ -75,7 +75,7 @@ export class RimeCLI {
     this.childDead = false
   }
 
-  public async requestContext(input: string): Promise<RimeContext> {
+  public async getContext(input: string): Promise<RimeContext> {
     // Group the input string into one request pack.
     return new Promise<RimeContext>((resolve, reject) => {
       try {
@@ -102,7 +102,7 @@ export class RimeCLI {
     });
   }
 
-  public async requestSchemaList(): Promise<RimeSchema[]> {
+  public async getSchemaList(): Promise<RimeSchema[]> {
     return new Promise<RimeSchema[]>((resolve, reject) => {
       try {
         this.request({
@@ -110,23 +110,67 @@ export class RimeCLI {
           content: <RimeSchemaRequest>{
             action: RimeSchemaRequestAction.GetList,
             schemaId: "",
-          }
+          },
         })
         .then((res) => {
           if ("schemaList" in res && res.schemaList !== null) {
-            resolve(res.schemaList)
+            resolve(res.schemaList);
           } else {
-            resolve([])
+            resolve([]);
           }
         })
         .catch((e) => {
-          reject(e)
-        })
+          reject(e);
+        });
       } catch(e) {
-        console.log(`Error parse the response: ${e}`)
-        resolve(null)
+        console.log(`Error parse the response: ${e}`);
+        resolve(null);
       }
     })
+  }
+
+  public async getSchema(): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      this.request(<RimeRequest>{
+        type: RimeRequestType.Schema,
+        content: <RimeSchemaRequest>{
+          action: RimeSchemaRequestAction.GetCurrent,
+          schemaId: "",
+        }
+      })
+      .then((res) => {
+        if ("schemaId" in res && res.schemaId != null) {
+          resolve(res.schemaId);
+        } else {
+          reject("Invalid response");
+        }
+      })
+      .catch((e) => {
+        reject(e);
+      });
+    });
+  }
+
+  public async setSchema(schemaId: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      this.request(<RimeRequest>{
+        type: RimeRequestType.Schema,
+        content: <RimeSchemaRequest>{
+          action: RimeSchemaRequestAction.Select,
+          schemaId: schemaId,
+        }
+      })
+      .then((res) => {
+        if ("success" in res && res.success == true) {
+          resolve();
+        } else {
+          reject("rime-cli reports error");
+        }
+      })
+      .catch((e) => {
+        reject(e);
+      });
+    });
   }
 
   private async request(rimeRequest: RimeRequest): Promise<any> {
@@ -169,7 +213,7 @@ export class RimeCLI {
         })
         this.proc.stdin.write(JSON.stringify(rimeRequest) + '\n', "utf8")
       } catch (e) {
-        console.log(`Error interacting with rime-cli: ${e}`)
+        console.log(`Error interacting with rime-cli: ${e}.`)
         reject(e)
       }
     })
