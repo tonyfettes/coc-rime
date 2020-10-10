@@ -11,9 +11,11 @@ Rime input method integration of coc.nvim
 First you need to install my version of [`rime-cli`](https://github.com/tonyfettes/rime-cli).
 
 You could clone the repo and `make` to get the binary file,
-or, if you use Arch Linux, you could use the `PKGBUILD` here.
+or, if you use Arch Linux, you could use
+[this `PKGBUILD`](https://github.com/tonyfettes/pkgbuild/blob/master/rime-cli-git/PKGBUILD).
 
-For now, the only to install the plugin is to clone the repo and run `yarn`.
+For now, the only to install the plugin is to clone the repo and run `yarn`,
+and add the path of this plugin to your vim's `runtimepath`.
 
 ## Keymaps
 
@@ -22,8 +24,11 @@ user to turn of the source.
 
 ## Lists
 
-No List support now, but in the future we will add it to
-let user choose the input schema.
+You could use `CocList` to switch between schema.
+
+```vim
+:CocList rime_schema
+```
 
 ## License
 
