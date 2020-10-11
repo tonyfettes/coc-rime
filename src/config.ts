@@ -12,7 +12,7 @@ export class Config {
   get priority() {
     return this.cfg.get<number>('priority', 0);
   }
-  get schema() {
-    return this.cfg.get<string>('schema', 'luna_pinyin');
+  get schemaId() {
+    return this.cfg.get<string>('schemaId', 'luna_pinyin');
   }
 }

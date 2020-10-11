@@ -49,10 +49,20 @@
       "type": "object",
       "title": "coc-rime configuration",
       "properties": {
-        "coc-rime.enabled": {
+        "rime.enabled": {
           "type": "boolean",
           "default": true,
           "description": "Enable coc-rime extension"
+        },
+        "rime.schemaId": {
+          "type": "string",
+          "default": "luna_pinyin",
+          "description": "Rime schema selected when startup"
+        },
+        "rime.priority": {
+          "type": "number",
+          "default": 0,
+          "description": "Priority of Rime completion source"
         }
       }
     },

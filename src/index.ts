@@ -7,11 +7,12 @@ import {Config} from './config';
 
 export async function activate(context: ExtensionContext): Promise<void> {
   const userConfig = new Config();
-  if (userConfig.enabled === false) {
+  if (userConfig.enabled == false) {
     return;
   }
 
-  const rimeCLI = new RimeCLI("/usr/bin/rime-cli");
+  const rimeCLI: RimeCLI = new RimeCLI("/usr/bin/rime-cli");
+  rimeCLI.setSchema(userConfig.schemaId);
   // Completion Source
   context.subscriptions.push(languages.registerCompletionItemProvider('rime', 'IM', null, {
     async provideCompletionItems(_document: TextDocument, _position: Position, _token: CancellationToken, context: CompletionContext): Promise<CompletionList | undefined | null> {
