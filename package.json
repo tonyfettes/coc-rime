@@ -63,6 +63,11 @@
           "type": "number",
           "default": 0,
           "description": "Priority of Rime completion source"
+        },
+        "rime.binaryPath": {
+          "type": "string",
+          "default": "/usr/bin/rime-cli",
+          "description": "Path of binary executive file of rime-cli"
         }
       }
     },

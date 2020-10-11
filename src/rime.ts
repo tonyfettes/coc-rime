@@ -109,11 +109,11 @@ export class RimeCLI {
           type: RimeRequestType.Schema,
           content: <RimeSchemaRequest>{
             action: RimeSchemaRequestAction.GetList,
-            schemaId: "",
+            schemaId: '',
           },
         })
         .then((res) => {
-          if ("schemaList" in res && res.schemaList !== null) {
+          if ('schemaList' in res && res.schemaList !== null) {
             resolve(res.schemaList);
           } else {
             resolve([]);
@@ -135,14 +135,14 @@ export class RimeCLI {
         type: RimeRequestType.Schema,
         content: <RimeSchemaRequest>{
           action: RimeSchemaRequestAction.GetCurrent,
-          schemaId: "",
+          schemaId: '',
         }
       })
       .then((res) => {
-        if ("schemaId" in res && res.schemaId != null) {
+        if ('schemaId' in res && res.schemaId != null) {
           resolve(res.schemaId);
         } else {
-          reject("Invalid response");
+          reject('Invalid response');
         }
       })
       .catch((e) => {
@@ -161,10 +161,10 @@ export class RimeCLI {
         }
       })
       .then((res) => {
-        if ("success" in res && res.success == true) {
+        if ('success' in res && res.success == true) {
           resolve();
         } else {
-          reject("rime-cli reports error");
+          reject('rime-cli reports error');
         }
       })
       .catch((e) => {
@@ -190,7 +190,7 @@ export class RimeCLI {
           this.restartChild()
         }
         if (!this.isChildAlive()) {
-          reject(new Error("rime-cli process is dead."))
+          reject(new Error('rime-cli process is dead.'))
         }
         this.rl.once('line', response => {
           let any_response: any = JSON.parse(response.toString())
@@ -201,7 +201,7 @@ export class RimeCLI {
             resolve(any_response);
           }
           /*
-          } else if ("menu" in any_response && any_response.menu !== null && "candidates" in any_response.menu) {
+          } else if ('menu' in any_response && any_response.menu !== null && 'candidates' in any_response.menu) {
             for (let item of any_response.menu.candidates) {
               candidateItems.push(item)
             }
@@ -211,7 +211,7 @@ export class RimeCLI {
           }
           */
         })
-        this.proc.stdin.write(JSON.stringify(rimeRequest) + '\n', "utf8")
+        this.proc.stdin.write(JSON.stringify(rimeRequest) + '\n', 'utf8')
       } catch (e) {
         console.log(`Error interacting with rime-cli: ${e}.`)
         reject(e)
@@ -233,7 +233,7 @@ export class RimeCLI {
     }
 
     const args = []
-    const binaryPath = this.binaryPath || "/usr/bin/rime-cli"
+    const binaryPath = this.binaryPath || '/usr/bin/rime-cli'
 
     this.proc = spawn(binaryPath, args)
     this.childDead = false

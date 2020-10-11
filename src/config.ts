@@ -15,4 +15,7 @@ export class Config {
   get schemaId() {
     return this.cfg.get<string>('schemaId', 'luna_pinyin');
   }
+  get binaryPath() {
+    return this.cfg.get<string>('binaryPath', '/usr/bin/rime-cli');
+  }
 }

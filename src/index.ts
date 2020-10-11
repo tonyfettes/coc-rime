@@ -11,50 +11,48 @@ export async function activate(context: ExtensionContext): Promise<void> {
     return;
   }
 
-  const rimeCLI: RimeCLI = new RimeCLI("/usr/bin/rime-cli");
+  const rimeCLI: RimeCLI = new RimeCLI(userConfig.binaryPath);
   rimeCLI.setSchema(userConfig.schemaId);
+
   // Completion Source
   context.subscriptions.push(languages.registerCompletionItemProvider('rime', 'IM', null, {
     async provideCompletionItems(_document: TextDocument, _position: Position, _token: CancellationToken, context: CompletionContext): Promise<CompletionList | undefined | null> {
       return new Promise<CompletionList>((resolve, reject) => {
-        try {
-          const acceptCharset = "abcdefghijklmnopqrstuvwxyz";
-          let preEdit: string = '';
-          for (const singleChar of context.option.input) {
-            if (!acceptCharset.includes(singleChar)) {
-              preEdit += singleChar;
-            }
+        const acceptCharset = 'abcdefghijklmnopqrstuvwxyz';
+        let preEdit = '';
+        for (const singleChar of context.option.input) {
+          if (!acceptCharset.includes(singleChar)) {
+            preEdit += singleChar;
+          } else {
+            break;
           }
-          rimeCLI.getContext(context.option.input)
-          .then((res) => {
-            if (res !== null && "menu" in res && res.menu != null && "candidates" in res.menu && res.menu.candidates != null) {
-              let completionItems: CompletionList = {
-                items: res.menu.candidates.map(candidate => {
-                  return {
-                    label: preEdit + candidate.text,
-                    sortText: context.option.input + candidate.label.toString().padStart(8, "0"),
-                    filterText: context.option.input,
-                    insertText: preEdit + candidate.text,
-                  }
-                }),
-                isIncomplete: context.option.input.length <= 3,
-              };
-              resolve(completionItems);
-            } else {
-              resolve({
-                items: [],
-                isIncomplete: context.option.input.length <= 3,
-              });
-            }
-          })
-          .catch((e) => {
-            console.log(`Error getting Context: ${e}.`);
-            reject(e);
-          });
-        } catch (e) {
-          console.log(`Error setting up request: ${e}`);
-          reject(e);
         }
+        rimeCLI.getContext(context.option.input)
+        .then((res) => {
+          if (res != null && 'menu' in res && res.menu != null && 'candidates' in res.menu && res.menu.candidates != null) {
+            let completionItems: CompletionList = {
+              items: res.menu.candidates.map(candidate => {
+                return {
+                  label: preEdit + candidate.text,
+                  sortText: context.option.input + candidate.label.toString().padStart(8, '0'),
+                  filterText: context.option.input,
+                  insertText: preEdit + candidate.text,
+                }
+              }),
+              isIncomplete: context.option.input.length <= 3,
+            };
+              resolve(completionItems);
+          } else {
+            resolve({
+              items: [],
+              isIncomplete: context.option.input.length <= 3,
+            });
+          }
+        })
+        .catch((e) => {
+          console.log(`Error getting Context: ${e}.`);
+          reject(e);
+        });
       })
     }
   }, [], userConfig.priority, []));

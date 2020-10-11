@@ -37,7 +37,7 @@ export default class SchemaList extends BasicList {
       .then((res) => {
         let listItems: ListItem[] = res.map(schema => {
           return {
-            label: schema.name + ": " + schema.schemaId,
+            label: schema.name + ': ' + schema.schemaId,
             filterText: schema.name + schema.schemaId,
             data: schema,
           }
