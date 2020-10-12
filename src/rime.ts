@@ -1,7 +1,10 @@
-import {commands, ExtensionContext, listManager, sources, CompletionContext, workspace, languages} from 'coc.nvim';
-import {ChildProcess, spawn} from 'child_process'
-import {ReadLine, createInterface} from 'readline'
-import {Mutex} from 'await-semaphore'
+import {ChildProcess, spawn} from 'child_process';
+import {ReadLine, createInterface} from 'readline';
+import {Mutex} from 'await-semaphore';
+import download from './download';
+import fs from 'fs';
+import mkdirp from 'mkdirp';
+import {workspace} from 'coc.nvim';
 
 export enum RimeRequestType {IOError, Invalid, Schema, Context};
 
@@ -73,6 +76,42 @@ export class RimeCLI {
   constructor(binaryPath?: string) {
     this.binaryPath = binaryPath
     this.childDead = false
+  }
+
+  public async installRimeCLI(root: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      try {
+        if (!fs.existsSync(root)) {
+          mkdirp.sync(root);
+        }
+        const dest = root + 'rime-cli';
+        if (!fs.existsSync(dest)) {
+          const binaryUrl = `https://github.com/tonyfettes/rime-cli/releases/download/v0.0.1-alpha/rime-cli-x86_64-linux`;
+          const item = workspace.createStatusBarItem(0, { progress: true });
+          item.text = `Downloading rime-cli`;
+          item.show()
+          download(binaryUrl, dest, percent => {
+            item.text = `Downloading rime-cli ${(percent * 100).toFixed(0)}%`;
+          })
+          .then(() => {
+            try {
+              fs.chmodSync(dest, 0o755);
+              resolve();
+            } catch (e) {
+              workspace.showMessage(`Download error ${e.message}`, `error`);
+              reject(e);
+            }
+          })
+          .catch((e) => {
+            reject(e);
+          });
+          item.dispose();
+        }
+        resolve();
+      } catch (e) {
+        reject(e);
+      }
+    });
   }
 
   public async getContext(input: string): Promise<RimeContext> {
