@@ -12,7 +12,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
   }
 
   const rimeCLI: RimeCLI = new RimeCLI(userConfig.binaryPath);
-  rimeCLI.installRimeCLI(context.storagePath);
+  rimeCLI.installRimeCLI(context.storagePath + '/');
   rimeCLI.setSchema(userConfig.schemaId);
 
   // Completion Source

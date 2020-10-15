@@ -74,40 +74,47 @@ export class RimeCLI {
   private rl: ReadLine
 
   constructor(binaryPath?: string) {
-    this.binaryPath = binaryPath
-    this.childDead = false
+    this.binaryPath = binaryPath || '/usr/bin/rime-cli';
+    this.childDead = false;
   }
 
   public async installRimeCLI(root: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       try {
+        if (fs.existsSync(this.binaryPath)) {
+          resolve();
+          return;
+        }
         if (!fs.existsSync(root)) {
           mkdirp.sync(root);
         }
-        const dest = root + 'rime-cli';
+        const binaryName = 'rime-cli';
+        const dest = root + binaryName;
         if (!fs.existsSync(dest)) {
           const binaryUrl = `https://github.com/tonyfettes/rime-cli/releases/download/v0.0.1-alpha/rime-cli-x86_64-linux`;
           const item = workspace.createStatusBarItem(0, { progress: true });
-          item.text = `Downloading rime-cli`;
-          item.show()
-          download(binaryUrl, dest, percent => {
-            item.text = `Downloading rime-cli ${(percent * 100).toFixed(0)}%`;
+          item.text = `Downloading ${binaryName}`;
+          item.show();
+          download(binaryUrl, dest, (percent) => {
+            item.text = `Downloading ${binaryName} ${(percent * 100).toFixed(0)}%`;
           })
           .then(() => {
             try {
               fs.chmodSync(dest, 0o755);
-              resolve();
             } catch (e) {
-              workspace.showMessage(`Download error ${e.message}`, `error`);
+              workspace.showMessage(`Error setting the permission: ${e}`, `error`);
               reject(e);
+            } finally {
+              item.dispose();
             }
           })
           .catch((e) => {
+            workspace.showMessage(`Error downloading ${binaryName}: ${e}`);
             reject(e);
           });
-          item.dispose();
+        } else {
+          resolve();
         }
-        resolve();
       } catch (e) {
         reject(e);
       }
@@ -264,34 +271,34 @@ export class RimeCLI {
 
   private restartChild(): void {
     if (this.numRestarts >= 10) {
-      return
+      return;
     }
-    this.numRestarts += 1
+    this.numRestarts += 1;
     if (this.proc) {
-      this.proc.kill()
+      this.proc.kill();
     }
 
-    const args = []
-    const binaryPath = this.binaryPath || '/usr/bin/rime-cli'
+    const args = [];
+    const binaryPath = this.binaryPath;
 
-    this.proc = spawn(binaryPath, args)
-    this.childDead = false
+    this.proc = spawn(binaryPath, args);
+    this.childDead = false;
     this.proc.on('exit', () => {
-      this.childDead = true
-    })
+      this.childDead = true;
+    });
     this.proc.stdin.on('error', error => {
       console.log(`stdin error: ${error}`)
-      this.childDead = true
-    })
+      this.childDead = true;
+    });
     this.proc.stdout.on('error', error => {
       // tslint:disable-next-line: no-console
-      console.log(`stdout error: ${error}`)
-      this.childDead = true
-    })
-    this.proc.unref() // As I understand it, this lets Node exit without waiting for the child
+      console.log(`stdout error: ${error}`);
+      this.childDead = true;
+    });
+    this.proc.unref(); // As I understand it, this lets Node exit without waiting for the child
     this.rl = createInterface({
       input: this.proc.stdout,
       output: this.proc.stdin
-    })
+    });
   }
 }
