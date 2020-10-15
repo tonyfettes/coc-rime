@@ -17,7 +17,7 @@ export default class SchemaList extends BasicList {
       this.rimeCLI.setSchema(item.data.schemaId)
       .then((_) => {})
       .catch((e) => {
-        console.log(`Error setting the schema: ${e}.`);
+        console.log(`Error setting the schema: ${e}`);
         workspace.showMessage(`Set schema ${item.data.label} failed.`);
       });
       this.rimeCLI.getSchema()
@@ -25,7 +25,7 @@ export default class SchemaList extends BasicList {
         workspace.showMessage(`Changed to schema ${schemaId}.`);
       })
       .catch((e) => {
-        console.log(`Error get current schema: ${e}.`);
+        console.log(`Error get current schema: ${e}`);
         workspace.showMessage(`Get current schema failed.`);
       });
     })

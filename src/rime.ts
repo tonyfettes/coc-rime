@@ -72,6 +72,7 @@ export class RimeCLI {
   private numRestarts = 0
   private proc: ChildProcess
   private rl: ReadLine
+  private schemaList: RimeSchema[]
 
   constructor(binaryPath?: string) {
     this.binaryPath = binaryPath || '/usr/bin/rime-cli';
@@ -81,6 +82,9 @@ export class RimeCLI {
   public async installRimeCLI(root: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       try {
+        if (process.arch != "x64" || process.platform != "linux") {
+          reject(`Sorry, the platform ${process.platform}-${process.arch} is not supported by rime-cli.`);
+        }
         if (fs.existsSync(this.binaryPath)) {
           resolve();
           return;
@@ -160,8 +164,10 @@ export class RimeCLI {
         })
         .then((res) => {
           if ('schemaList' in res && res.schemaList !== null) {
+            this.schemaList = res.schemaList;
             resolve(res.schemaList);
           } else {
+            this.schemaList = [];
             resolve([]);
           }
         })
@@ -210,7 +216,7 @@ export class RimeCLI {
         if ('success' in res && res.success == true) {
           resolve();
         } else {
-          reject('rime-cli reports error');
+          reject(`rime-cli reports error.`);
         }
       })
       .catch((e) => {
@@ -246,20 +252,10 @@ export class RimeCLI {
           } else {
             resolve(any_response);
           }
-          /*
-          } else if ('menu' in any_response && any_response.menu !== null && 'candidates' in any_response.menu) {
-            for (let item of any_response.menu.candidates) {
-              candidateItems.push(item)
-            }
-            resolve(candidateItems)
-          } else {
-            resolve(candidateItems)
-          }
-          */
         })
         this.proc.stdin.write(JSON.stringify(rimeRequest) + '\n', 'utf8')
       } catch (e) {
-        console.log(`Error interacting with rime-cli: ${e}.`)
+        console.log(`Error interacting with rime-cli: ${e}`)
         reject(e)
       }
     })

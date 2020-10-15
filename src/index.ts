@@ -12,7 +12,9 @@ export async function activate(context: ExtensionContext): Promise<void> {
   }
 
   const rimeCLI: RimeCLI = new RimeCLI(userConfig.binaryPath);
-  rimeCLI.installRimeCLI(context.storagePath + '/');
+  rimeCLI.installRimeCLI(context.storagePath + '/').catch((e) => {
+    workspace.showMessage(`Failed to install/find rime-cli: ${e}`, 'error');
+  });
   rimeCLI.setSchema(userConfig.schemaId);
 
   // Completion Source
@@ -51,7 +53,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
           }
         })
         .catch((e) => {
-          console.log(`Error getting Context: ${e}.`);
+          console.log(`Error getting Context: ${e}`);
           reject(e);
         });
       })
