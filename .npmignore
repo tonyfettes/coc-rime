@@ -1,4 +1,5 @@
 src
+img
 node_modules
 tsconfig.json
 *.map
@@ -11,3 +12,5 @@ yarn-error.log
 .eslintrc.js
 .prettierrc
 .eslintrc.js
+.netrwhist
+.vim

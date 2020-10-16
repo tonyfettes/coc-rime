@@ -6,16 +6,17 @@ Rime input method integration of coc.nvim
 
 ![screenshot](https://user-images.githubusercontent.com/29998228/95216680-f1974680-0824-11eb-94cb-83a8d9a5b59d.gif)
 
+## Prerequisite
+
+A 64-bit Linux system with `librime` installed. Mac and Windows are not supported yet.
+
 ## Install
 
-First you need to install my version of [`rime-cli`](https://github.com/tonyfettes/rime-cli).
+Open your vim with `coc.nvim` plugin installed, and run
 
-You could clone the repo and `make` to get the binary file,
-or, if you use Arch Linux, you could use
-[this `PKGBUILD`](https://github.com/tonyfettes/pkgbuild/blob/master/rime-cli-git/PKGBUILD).
-
-For now, the only to install the plugin is to clone the repo and run `yarn`,
-and add the path of this plugin to your vim's `runtimepath`.
+```vim
+:CocInstall coc-rime
+```
 
 ## Keymaps
 
@@ -29,6 +30,14 @@ You could use `CocList` to switch between schema.
 ```vim
 :CocList rime_schema
 ```
+
+## User Configuration
+
+1. `rime.enabled`: Whether to enable this source.
+2. `rime.priority`: The priority of this completion source.
+3. `rime.schemaId`: The `schemaId` selected when `coc-rime` start.
+   You could get it from `rime_schema` list.
+4. `rime.binaryPath`: The path where binary of `coc-rime` is placed.
 
 ## License
 
