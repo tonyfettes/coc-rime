@@ -105,6 +105,7 @@ export class RimeCLI {
           .then(() => {
             try {
               fs.chmodSync(dest, 0o755);
+              this.binaryPath = dest;
             } catch (e) {
               workspace.showMessage(`Error setting the permission: ${e}`, `error`);
               reject(e);
@@ -117,6 +118,7 @@ export class RimeCLI {
             reject(e);
           });
         } else {
+          this.binaryPath = dest;
           resolve();
         }
       } catch (e) {
@@ -266,7 +268,7 @@ export class RimeCLI {
   }
 
   private restartChild(): void {
-    if (this.numRestarts >= 10) {
+    if (this.numRestarts >= 10 || !fs.existsSync(this.binaryPath)) {
       return;
     }
     this.numRestarts += 1;
