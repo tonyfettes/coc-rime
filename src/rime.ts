@@ -66,6 +66,7 @@ export interface RimeSchema {
 }
 
 export class RimeCLI {
+  private isEnabled: boolean
   private childDead: boolean
   private binaryPath?: string
   private mutex: Mutex = new Mutex()
@@ -125,6 +126,32 @@ export class RimeCLI {
         reject(e);
       }
     });
+  }
+
+  public async setCompletionStatus(status: boolean): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      try {
+        this.isEnabled = status;
+        resolve(this.isEnabled);
+      } catch(e) {
+        reject(e);
+      }
+    });
+  }
+
+  public async toggleCompletionStatus(): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      try {
+        this.isEnabled = !this.isEnabled;
+        resolve(this.isEnabled);
+      } catch(e) {
+        reject(e);
+      }
+    });
+  }
+
+  public async getCompletionStatus(): Promise<boolean> {
+    return this.isEnabled;
   }
 
   public async getContext(input: string): Promise<RimeContext> {
