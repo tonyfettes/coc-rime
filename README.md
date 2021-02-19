@@ -8,7 +8,8 @@ Rime input method integration of coc.nvim
 
 ## Prerequisite
 
-A 64-bit Linux system with `librime` installed. Mac and Windows are not supported yet.
+A 64-bit Linux system with `librime` installed.
+Mac and Windows are not supported yet.
 
 ## Install
 
@@ -18,10 +19,11 @@ Open your vim with `coc.nvim` plugin installed, and run
 :CocInstall coc-rime
 ```
 
-## Keymaps
+## Commands
 
-No keymaps for now, maybe in the future we could let
-user to turn of the source.
+1. `rime.enable`: enable this source temporarily.
+2. `rime.disable`: disable this source temporarily.
+3. `rime.toggle`: temporarily toggle the status of the source.
 
 ## Lists
 

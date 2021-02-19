@@ -15,7 +15,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
   });
   rimeCLI.setCompletionStatus(userConfig.enabled);
   rimeCLI.setSchema(userConfig.schemaId);
-  const statusBarItem = window.createStatusBarItem(99, { progress: false });
+  const statusBarItem = window.createStatusBarItem(0, { progress: false });
   statusBarItem.text = 'ㄓ';
   if (userConfig.enabled === true) {
     statusBarItem.show();
@@ -55,6 +55,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
             let inputString = '';
             let contextString = '';
             let inputRange: Range = { start: position, end: position, };
+            const splitCharset = ' \n\r\t/\/,.()[]<>';
             const getPrevSingleChar = (offset: number): string => {
               return document.getText({
                 start: document.positionAt(offset - 1),
@@ -63,24 +64,20 @@ export async function activate(context: ExtensionContext): Promise<void> {
             };
             let singleChar = getPrevSingleChar(offset);
             while (isLowerAlpha(singleChar) && offset != 0) {
-              window.showMessage('singleChar: ' + singleChar);
               inputString = singleChar + inputString;
               offset -= 1;
               singleChar = getPrevSingleChar(offset);
             }
-            window.showMessage('offset: ' + offset);
-            window.showMessage('input: ' + inputString);
             // Special treat for camelCase naming
             if (isUpperAlpha(singleChar)) {
               inputString = '';
             }
             inputRange.start = document.positionAt(offset);
-            while (singleChar != ' ' && singleChar != '\n' && singleChar != '\r' && singleChar != '\t' && offset != 0) {
+            while (splitCharset.includes(singleChar) === false && offset != 0) {
               contextString = singleChar + contextString;
               offset -= 1;
               singleChar = getPrevSingleChar(offset);
             }
-            // window.showMessage('context: ' + contextString + ', input: ' + inputString);
             rimeCLI.getContext(inputString).then((res) => {
               if (res != null && 'menu' in res && res.menu != null && 'candidates' in res.menu && res.menu.candidates != null) {
                 resolve({
@@ -103,7 +100,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
           }
         });
       }
-    }, [], userConfig.priority, [])
+    }, [], userConfig.priority, []),
   );
 
   // Schema List

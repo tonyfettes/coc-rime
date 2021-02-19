@@ -30,6 +30,12 @@ Rime 输入法的 coc.nvim 集成
 
 然后选择你想要选择的 schema 即可。
 
+## 可以使用的命令
+
+1. `rime.enable`: 临时启用这个补全。
+2. `rime.disable`: 临时关闭这个补全。
+3. `rime.toggle`: 临时切换这个补全的开启/关闭状态。
+
 ## 可配置的选项
 
 1. `rime.enabled`: 是否启用这个补全。
@@ -44,7 +50,8 @@ Rime 输入法的 coc.nvim 集成
 - [x] 候选词优先级
 - [x] 用户配置（补全来源优先级、补全项目数量等）
 - [x] Schema 和 繁/简 通过 CocList 切换
-- [ ] global/workspace/folder 开启和关闭
+- [x] global/workspace/folder 开启和关闭（大概）
+- [ ] 全角符号输入
 
 ## License
 
