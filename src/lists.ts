@@ -1,4 +1,4 @@
-import {BasicList, ListAction, ListContext, ListItem, Neovim, workspace} from 'coc.nvim'
+import {BasicList, ListAction, ListContext, ListItem, Neovim, window} from 'coc.nvim'
 import {RimeSchema, RimeCLI} from './rime'
 
 export default class SchemaList extends BasicList {
@@ -18,15 +18,15 @@ export default class SchemaList extends BasicList {
       .then((_) => {})
       .catch((e) => {
         console.log(`Error setting the schema: ${e}`);
-        workspace.showMessage(`Set schema ${item.data.label} failed.`);
+        window.showMessage(`Set schema ${item.data.label} failed.`);
       });
       this.rimeCLI.getSchema()
       .then((schemaId) => {
-        workspace.showMessage(`Changed to schema ${schemaId}.`);
+        window.showMessage(`Changed to schema ${schemaId}.`);
       })
       .catch((e) => {
         console.log(`Error get current schema: ${e}`);
-        workspace.showMessage(`Get current schema failed.`);
+        window.showMessage(`Get current schema failed.`);
       });
     })
   }
