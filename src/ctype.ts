@@ -1,6 +1,6 @@
 function _isAlpha(char: string): number {
   if (char.length != 1) {
-    throw 'Not a char.';
+    return 0;
   }
   const charCode = char.charCodeAt(0);
   if (charCode >= 'A'.charCodeAt(0) && charCode <= 'Z'.charCodeAt(0)) {

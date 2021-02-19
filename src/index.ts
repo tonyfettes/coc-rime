@@ -54,7 +54,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
           if (offset != 0 && rimeCLI.getCompletionStatus()) {
             let inputString = '';
             let contextString = '';
-            let inputRange: Range = { start: document.positionAt(offset), end: document.positionAt(offset), };
+            let inputRange: Range = { start: position, end: position, };
             const getPrevSingleChar = (offset: number): string => {
               return document.getText({
                 start: document.positionAt(offset - 1),
@@ -63,10 +63,13 @@ export async function activate(context: ExtensionContext): Promise<void> {
             };
             let singleChar = getPrevSingleChar(offset);
             while (isLowerAlpha(singleChar) && offset != 0) {
+              window.showMessage('singleChar: ' + singleChar);
               inputString = singleChar + inputString;
               offset -= 1;
               singleChar = getPrevSingleChar(offset);
             }
+            window.showMessage('offset: ' + offset);
+            window.showMessage('input: ' + inputString);
             // Special treat for camelCase naming
             if (isUpperAlpha(singleChar)) {
               inputString = '';
@@ -77,6 +80,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
               offset -= 1;
               singleChar = getPrevSingleChar(offset);
             }
+            // window.showMessage('context: ' + contextString + ', input: ' + inputString);
             rimeCLI.getContext(inputString).then((res) => {
               if (res != null && 'menu' in res && res.menu != null && 'candidates' in res.menu && res.menu.candidates != null) {
                 resolve({
