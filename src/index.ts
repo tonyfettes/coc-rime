@@ -1,8 +1,8 @@
-//import { commands, CompleteResult, ExtensionContext, listManager, sources, workspace } from 'coc.nvim';
-import {commands, ExtensionContext, listManager, sources, CompletionContext, workspace, languages} from 'coc.nvim';
-import {TextDocument, Position, CancellationToken, CompletionList, CompletionItem, Range} from 'vscode-languageserver-protocol';
+import {commands, ExtensionContext, listManager, CompletionContext, window, workspace, languages} from 'coc.nvim';
+import {Position, CancellationToken, CompletionList, Range, CompletionItem} from 'vscode-languageserver-protocol';
+import {TextDocument} from 'vscode-languageserver-textdocument';
 import SchemaList from './lists';
-import {RimeContext, RimeCandidate, RimeSchema, RimeCLI} from './rime';
+import {RimeCLI} from './rime';
 import {Config} from './config';
 
 export async function activate(context: ExtensionContext): Promise<void> {
@@ -10,50 +10,83 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
   const rimeCLI: RimeCLI = new RimeCLI(userConfig.binaryPath);
   await rimeCLI.installRimeCLI(context.storagePath + '/').catch((e) => {
-    workspace.showMessage(`Failed to install/find rime-cli: ${e}`, 'error');
+    window.showMessage(`Failed to install/find rime-cli: ${e}`, 'error');
   });
   rimeCLI.setCompletionStatus(userConfig.enabled);
   rimeCLI.setSchema(userConfig.schemaId);
+  const statusBarItem = window.createStatusBarItem(99, { progress: false });
+  statusBarItem.text = 'ㄓ';
+  if (userConfig.enabled === true) {
+    statusBarItem.show();
+  }
 
   context.subscriptions.push(
     // Commands
     commands.registerCommand('rime.enable', async () => {
       rimeCLI.setCompletionStatus(true);
+      statusBarItem.show();
     }),
 
     commands.registerCommand('rime.disable', async () => {
       rimeCLI.setCompletionStatus(false);
+      statusBarItem.hide();
     }),
 
     commands.registerCommand('rime.toggle', async () => {
       rimeCLI.toggleCompletionStatus();
+      rimeCLI.getCompletionStatus()
+      .then((completionStatus) => {
+        if (completionStatus) {
+          statusBarItem.show();
+        } else {
+          statusBarItem.hide();
+        }
+      })
+      .catch((e) => {
+        console.log(`Error getting Context: ${e}`);
+      });
     }),
 
     // Completion Source
     languages.registerCompletionItemProvider('rime', 'IM', null, {
-      async provideCompletionItems(document: TextDocument, position: Position, _token: CancellationToken, context: CompletionContext): Promise<CompletionList | undefined | null> {
+      async provideCompletionItems(document: TextDocument, position: Position, _token: CancellationToken, _context: CompletionContext): Promise<CompletionList | undefined | null> {
         return new Promise<CompletionList>((resolve, reject) => {
-          const alphaCharset = 'acdghijklmnpqstuvwxyz';
+          const alphaCharset = 'abcdefghijklmnopqrstuvwxyz';
           const punctuationCharset = '\'\"()<>[],.?;:';
-
-          let preEdit = '';
-          for (const singleChar of context.option.input) {
-            if (!alphaCharset.includes(singleChar)) {
-              preEdit += singleChar;
-            } else {
-              break;
-            }
-          }
+          const punctMap: Map<string, string[]> = new Map();
+          punctMap.set(',', ['，']);
+          punctMap.set('.', ['。']);
+          punctMap.set('?', ['？']);
+          punctMap.set('!', ['！']);
+          punctMap.set(':', ['：']);
+          punctMap.set(';', ['；']);
+          punctMap.set('\\', ['、']);
+          punctMap.set('\"', ['“', '”']);
+          punctMap.set('\'', ['‘', '’']);
+          punctMap.set('<', ['《', '〈', '«', '‹', '˂']);
+          punctMap.set('>', ['》', '〉', '»', '›', '˃']);
+          punctMap.set('(', ['（']);
+          punctMap.set(')', ['）']);
+          punctMap.set('[', ['「', '【', '〔', '［', '〚']);
+          punctMap.set(']', ['」', '】', '〕', '］', '〛']);
+          punctMap.set('{', ['｛']);
+          punctMap.set('}', ['｝']);
+          punctMap.set('$', ['￥']);
+          punctMap.set('|', ['｜']);
+          punctMap.set('^', ['……']);
+          punctMap.set('~', ['～']);
 
           let inputString = '';
+          let contextString = '';
           let offset = document.offsetAt(position);
+          window.showMessage('offset: ' + offset);
           let inputRange: Range = { start: document.positionAt(offset), end: document.positionAt(offset), };
           if (offset != 0) {
             let singleChar = document.getText({
               start: document.positionAt(offset - 1),
               end: document.positionAt(offset),
             });
-            while ((alphaCharset.includes(singleChar) || punctuationCharset.includes(singleChar)) && offset != 0) {
+            while (alphaCharset.includes(singleChar) && offset != 0) {
               inputString = singleChar + inputString;
               offset -= 1;
               singleChar = document.getText({
@@ -62,81 +95,58 @@ export async function activate(context: ExtensionContext): Promise<void> {
               });
             }
             inputRange.start = document.positionAt(offset);
+            while (singleChar != ' ' && singleChar != '\n' && singleChar != '\r' && singleChar != '\t') {
+              contextString = singleChar + contextString;
+              offset -= 1;
+              singleChar = document.getText({
+                start: document.positionAt(offset - 1),
+                end: document.positionAt(offset),
+              });
+            }
           }
+          window.showMessage('context: ' + contextString + ', input: ' + inputString);
 
-          rimeCLI.getContext(inputString)
-          .then((res) => {
-            // const sampleItem: CompletionItem = {
-            //   label: 'newText',
-            //   sortText: context.option.input,
-            //   filterText: context.option.input,
-            //   textEdit: {
-            //     range: inputRange,
-            //     newText: 'newText',
-            //   }
-            // };
-            // let { range } = sampleItem.textEdit;
-            // let newText: string = sampleItem.textEdit.newText;
-            // if (range && range.start.line == range.end.line) {
-            //   let { line, col, colnr } = context.option;
-            //   let character = col;
-            //   if (range.start.character > character) {
-            //     let before = line.slice(character - range.start.character)
-            //     newText = before + newText
-            //   } else {
-            //     let start = line.slice(range.start.character, character)
-            //     if (start.length && newText.startsWith(start)) {
-            //       newText = newText.slice(start.length)
-            //     }
-            //   }
-            //   character = colnr - 1;
-            //   if (range.end.character > character) {
-            //     let end = line.slice(character, range.end.character)
-            //     if (newText.endsWith(end)) {
-            //       newText = newText.slice(0, - end.length)
-            //     }
-            //   }
-            //   workspace.showMessage('newText: ' + newText + ', start: ' + inputRange.start.character + ', end: ' + inputRange.end.character);
-            // }
-            // resolve({
-            //   items: [sampleItem],
-            //   isIncomplete: false,
-            // });
-
-            rimeCLI.getCompletionStatus()
-            .then((isEnabled) => {
-              if (isEnabled && res != null && 'menu' in res && res.menu != null && 'candidates' in res.menu && res.menu.candidates != null) {
-                let completionItems: CompletionList = {
-                  items: res.menu.candidates.map(candidate => {
-                    return {
-                      label: preEdit + candidate.text,
-                      sortText: context.option.input + candidate.label.toString().padStart(8, '0'),
-                      filterText: context.option.input,
-                      textEdit: {
-                        range: inputRange,
-                        newText: candidate.text,
-                      }
-                    }
-                  }),
-                  isIncomplete: false,
-                  // isIncomplete: context.option.input.length <= 3,
-                };
-                resolve(completionItems);
-              } else {
-                resolve({
-                  items: [],
-                  isIncomplete: false,
-                  // isIncomplete: context.option.input.length <= 3,
-                });
+          rimeCLI.getCompletionStatus()
+          .then((isEnabled) => {
+            let completionList: CompletionList = {
+              items: [],
+              isIncomplete: true,
+            };
+            for (const [halfWidthPunct, fullWithPunctList] of punctMap) {
+              for (const fullWithPunct of fullWithPunctList) {
+                completionList.items.push({
+                  label: fullWithPunct,
+                  sortText: halfWidthPunct,
+                  filterText: halfWidthPunct + 'pct',
+                  insertText: fullWithPunct,
+                } as CompletionItem);
               }
+            }
+            rimeCLI.getContext(inputString)
+            .then((res) => {
+              if (isEnabled && res != null && 'menu' in res && res.menu != null && 'candidates' in res.menu && res.menu.candidates != null) {
+                completionList.items = completionList.items.concat(res.menu.candidates.map(candidate => {
+                  return {
+                    label: contextString + candidate.text,
+                    sortText: contextString + inputString + candidate.label.toString().padStart(8, '0'),
+                    filterText: contextString + inputString,
+                    textEdit: {
+                      range: inputRange,
+                      newText: candidate.text,
+                    }
+                  };
+                }));
+                completionList.isIncomplete = false;
+              }
+              resolve(completionList);
             })
             .catch((e) => {
-              console.log(`Error getting the status of the completion source: ${e}`);
+              console.log(`Error getting Context: ${e}`);
               reject(e);
             });
           })
           .catch((e) => {
-            console.log(`Error getting Context: ${e}`);
+            console.log(`Error getting the status of the completion source: ${e}`);
             reject(e);
           });
         });

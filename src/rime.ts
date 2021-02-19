@@ -1,10 +1,10 @@
 import {ChildProcess, spawn} from 'child_process';
 import {ReadLine, createInterface} from 'readline';
-import {Mutex} from 'await-semaphore';
+import {Mutex} from 'async-mutex';
 import download from './download';
 import fs from 'fs';
 import mkdirp from 'mkdirp';
-import {workspace} from 'coc.nvim';
+import {window} from 'coc.nvim';
 
 export enum RimeRequestType {IOError, Invalid, Schema, Context};
 
@@ -97,7 +97,7 @@ export class RimeCLI {
         const dest = root + binaryName;
         if (!fs.existsSync(dest)) {
           const binaryUrl = `https://github.com/tonyfettes/rime-cli/releases/download/v0.0.1-alpha/rime-cli-x86_64-linux`;
-          const item = workspace.createStatusBarItem(0, { progress: true });
+          const item = window.createStatusBarItem(0, { progress: true });
           item.text = `Downloading ${binaryName}`;
           item.show();
           download(binaryUrl, dest, (percent) => {
@@ -108,14 +108,14 @@ export class RimeCLI {
               fs.chmodSync(dest, 0o755);
               this.binaryPath = dest;
             } catch (e) {
-              workspace.showMessage(`Error setting the permission: ${e}`, `error`);
+              window.showMessage(`Error setting the permission: ${e}`, `error`);
               reject(e);
             } finally {
               item.dispose();
             }
           })
           .catch((e) => {
-            workspace.showMessage(`Error downloading ${binaryName}: ${e}`);
+            window.showMessage(`Error downloading ${binaryName}: ${e}`);
             reject(e);
           });
         } else {
@@ -194,11 +194,10 @@ export class RimeCLI {
         .then((res) => {
           if ('schemaList' in res && res.schemaList !== null) {
             this.schemaList = res.schemaList;
-            resolve(res.schemaList);
           } else {
             this.schemaList = [];
-            resolve([]);
           }
+          resolve(this.schemaList);
         })
         .catch((e) => {
           reject(e);
@@ -255,12 +254,12 @@ export class RimeCLI {
   }
 
   private async request(rimeRequest: RimeRequest): Promise<any> {
-    const release = await this.mutex.acquire()
+    const release = await this.mutex.acquire();
     try {
       // Send the request asynchronously.
-      return await this.requestUnlocked(rimeRequest)
+      return await this.requestUnlocked(rimeRequest);
     } finally {
-      release()
+      release();
     }
   }
 
@@ -268,24 +267,24 @@ export class RimeCLI {
     return new Promise<any>((resolve, reject) => {
       try {
         if (!this.isChildAlive()) {
-          this.restartChild()
+          this.restartChild();
         }
         if (!this.isChildAlive()) {
-          reject(new Error('rime-cli process is dead.'))
+          reject(new Error('rime-cli process is dead.'));
         }
         this.rl.once('line', response => {
-          let any_response: any = JSON.parse(response.toString())
+          let any_response: any = JSON.parse(response.toString());
           //let candidateItems: string[] = []
           if (any_response === null || any_response === undefined) {
-            resolve(null)
+            resolve(null);
           } else {
             resolve(any_response);
           }
         })
-        this.proc.stdin.write(JSON.stringify(rimeRequest) + '\n', 'utf8')
+        this.proc.stdin.write(JSON.stringify(rimeRequest) + '\n', 'utf8');
       } catch (e) {
-        console.log(`Error interacting with rime-cli: ${e}`)
-        reject(e)
+        console.log(`Error interacting with rime-cli: ${e}`);
+        reject(e);
       }
     })
   }
