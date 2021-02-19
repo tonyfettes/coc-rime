@@ -8,6 +8,7 @@ import {Config} from './config';
 export async function activate(context: ExtensionContext): Promise<void> {
   const userConfig = new Config();
 
+  const start = new Date().getTime();
   const rimeCLI: RimeCLI = new RimeCLI(userConfig.binaryPath);
   await rimeCLI.installRimeCLI(context.storagePath + '/').catch((e) => {
     window.showMessage(`Failed to install/find rime-cli: ${e}`, 'error');
@@ -19,6 +20,10 @@ export async function activate(context: ExtensionContext): Promise<void> {
   if (userConfig.enabled === true) {
     statusBarItem.show();
   }
+  const end = new Date().getTime();
+  // window.showMessage('time to init: ' + (end - start).toString());
+  
+  let semaphore = 0;
 
   context.subscriptions.push(
     // Commands
@@ -49,37 +54,12 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
     // Completion Source
     languages.registerCompletionItemProvider('rime', 'IM', null, {
-      async provideCompletionItems(document: TextDocument, position: Position, _token: CancellationToken, _context: CompletionContext): Promise<CompletionList | undefined | null> {
+      async provideCompletionItems(document: TextDocument, position: Position, _token: CancellationToken, _context: CompletionContext): Promise<CompletionList> {
         return new Promise<CompletionList>((resolve, reject) => {
           const alphaCharset = 'abcdefghijklmnopqrstuvwxyz';
-          const punctuationCharset = '\'\"()<>[],.?;:';
-          const punctMap: Map<string, string[]> = new Map();
-          punctMap.set(',', ['，']);
-          punctMap.set('.', ['。']);
-          punctMap.set('?', ['？']);
-          punctMap.set('!', ['！']);
-          punctMap.set(':', ['：']);
-          punctMap.set(';', ['；']);
-          punctMap.set('\\', ['、']);
-          punctMap.set('\"', ['“', '”']);
-          punctMap.set('\'', ['‘', '’']);
-          punctMap.set('<', ['《', '〈', '«', '‹', '˂']);
-          punctMap.set('>', ['》', '〉', '»', '›', '˃']);
-          punctMap.set('(', ['（']);
-          punctMap.set(')', ['）']);
-          punctMap.set('[', ['「', '【', '〔', '［', '〚']);
-          punctMap.set(']', ['」', '】', '〕', '］', '〛']);
-          punctMap.set('{', ['｛']);
-          punctMap.set('}', ['｝']);
-          punctMap.set('$', ['￥']);
-          punctMap.set('|', ['｜']);
-          punctMap.set('^', ['……']);
-          punctMap.set('~', ['～']);
-
           let inputString = '';
           let contextString = '';
           let offset = document.offsetAt(position);
-          window.showMessage('offset: ' + offset);
           let inputRange: Range = { start: document.positionAt(offset), end: document.positionAt(offset), };
           if (offset != 0) {
             let singleChar = document.getText({
@@ -103,29 +83,22 @@ export async function activate(context: ExtensionContext): Promise<void> {
                 end: document.positionAt(offset),
               });
             }
+          } else {
+            resolve({
+              items: [],
+              isIncomplete: false,
+            });
           }
-          window.showMessage('context: ' + contextString + ', input: ' + inputString);
-
           rimeCLI.getCompletionStatus()
           .then((isEnabled) => {
             let completionList: CompletionList = {
               items: [],
-              isIncomplete: true,
+              isIncomplete: false,
             };
-            for (const [halfWidthPunct, fullWithPunctList] of punctMap) {
-              for (const fullWithPunct of fullWithPunctList) {
-                completionList.items.push({
-                  label: fullWithPunct,
-                  sortText: halfWidthPunct,
-                  filterText: halfWidthPunct + 'pct',
-                  insertText: fullWithPunct,
-                } as CompletionItem);
-              }
-            }
             rimeCLI.getContext(inputString)
             .then((res) => {
               if (isEnabled && res != null && 'menu' in res && res.menu != null && 'candidates' in res.menu && res.menu.candidates != null) {
-                completionList.items = completionList.items.concat(res.menu.candidates.map(candidate => {
+                completionList.items = res.menu.candidates.map(candidate => {
                   return {
                     label: contextString + candidate.text,
                     sortText: contextString + inputString + candidate.label.toString().padStart(8, '0'),
@@ -135,19 +108,25 @@ export async function activate(context: ExtensionContext): Promise<void> {
                       newText: candidate.text,
                     }
                   };
-                }));
+                });
                 completionList.isIncomplete = false;
               }
               resolve(completionList);
             })
             .catch((e) => {
               console.log(`Error getting Context: ${e}`);
-              reject(e);
+              resolve({
+                items: [],
+                isIncomplete: false,
+              });
             });
           })
           .catch((e) => {
             console.log(`Error getting the status of the completion source: ${e}`);
-            reject(e);
+            resolve({
+              items: [],
+              isIncomplete: false,
+            });
           });
         });
       }
