@@ -68,7 +68,7 @@ export interface RimeSchema {
 export class RimeCLI {
   private isEnabled: boolean
   private childDead: boolean
-  private binaryPath?: string
+  private binaryPath: string
   private mutex: Mutex = new Mutex()
   private numRestarts = 0
   private proc: ChildProcess
@@ -78,6 +78,7 @@ export class RimeCLI {
   constructor(binaryPath?: string) {
     this.binaryPath = binaryPath || '/usr/bin/rime-cli';
     this.childDead = false;
+    this.isEnabled = true;
   }
 
   public async installRimeCLI(root: string): Promise<void> {
@@ -150,7 +151,7 @@ export class RimeCLI {
     });
   }
 
-  public async getCompletionStatus(): Promise<boolean> {
+  public getCompletionStatus(): boolean {
     return this.isEnabled;
   }
 

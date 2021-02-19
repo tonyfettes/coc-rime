@@ -6,7 +6,7 @@
     "declaration": false,
     "sourceMap": true,
     "outDir": "lib",
-    "strict": true,
+    "strict": false,
     "moduleResolution": "node",
     "noImplicitAny": false,
     "esModuleInterop": true
