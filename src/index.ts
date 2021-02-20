@@ -20,7 +20,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
   if (userConfig.enabled === true) {
     statusBarItem.show();
   }
-  
+
   context.subscriptions.push(
     // Commands
     commands.registerCommand('rime.enable', async () => {
@@ -50,12 +50,35 @@ export async function activate(context: ExtensionContext): Promise<void> {
             items: [],
             isIncomplete: false,
           };
+          const punctMap: Map<string, string[]> = new Map([
+            [',', ['，']],
+            ['.', ['。']],
+            ['?', ['？']],
+            ['!', ['！']],
+            [':', ['：']],
+            [';', ['；']],
+            ['\\', ['、']],
+            ['\"', ['“', '”']],
+            ['\'', ['‘', '’']],
+            ['<', ['《', '〈', '«', '‹', '˂']],
+            ['>', ['》', '〉', '»', '›', '˃']],
+            ['(', ['（']],
+            [')', ['）']],
+            ['[', ['「', '【', '〔', '［', '〚']],
+            [']', ['」', '】', '〕', '］', '〛']],
+            ['{', ['｛']],
+            ['}', ['｝']],
+            ['$', ['￥']],
+            ['|', ['｜']],
+            ['^', ['……']],
+            ['~', ['～']],
+          ]);
           let offset = document.offsetAt(position);
           if (offset != 0 && rimeCLI.getCompletionStatus()) {
             let inputString = '';
             let contextString = '';
             let inputRange: Range = { start: position, end: position, };
-            const splitCharset = ' \n\r\t/\/,.()[]<>';
+            const splitCharset = ' \n\r\t/\/,.()[]<>，。？！：；、“”‘’《〈«‹˂》〉»›˃（）「【〔［〚」】〕］〛｛｝￥｜……～';
             const getPrevSingleChar = (offset: number): string => {
               return document.getText({
                 start: document.positionAt(offset - 1),
@@ -63,38 +86,54 @@ export async function activate(context: ExtensionContext): Promise<void> {
               });
             };
             let singleChar = getPrevSingleChar(offset);
-            while (isLowerAlpha(singleChar) && offset != 0) {
-              inputString = singleChar + inputString;
-              offset -= 1;
-              singleChar = getPrevSingleChar(offset);
-            }
-            // Special treat for camelCase naming
-            if (isUpperAlpha(singleChar)) {
-              inputString = '';
-            }
-            inputRange.start = document.positionAt(offset);
-            while (splitCharset.includes(singleChar) === false && offset != 0) {
-              contextString = singleChar + contextString;
-              offset -= 1;
-              singleChar = getPrevSingleChar(offset);
-            }
-            rimeCLI.getContext(inputString).then((res) => {
-              if (res != null && 'menu' in res && res.menu != null && 'candidates' in res.menu && res.menu.candidates != null) {
-                resolve({
-                  items: res.menu.candidates.map(candidate => {
-                    return {
-                      label: contextString + candidate.text,
-                      sortText: contextString + inputString + candidate.label.toString().padStart(8, '0'),
-                      filterText: contextString + inputString,
-                      textEdit: { range: inputRange, newText: candidate.text, }
-                    };
-                  }),
-                  isIncomplete: false,
+            if (punctMap.has(singleChar)) {
+              let punctResponse = emptyResponse;
+              for (const fullWidthPunct of punctMap.get(singleChar)) {
+                punctResponse.items.push({
+                  label: fullWidthPunct,
+                  sortText: singleChar,
+                  filterText: singleChar,
+                  textEdit: {
+                    range: { start: document.positionAt(offset - 1), end: position },
+                    newText: fullWidthPunct,
+                  },
                 });
-              } else {
-                resolve(emptyResponse);
               }
-            }).catch((e) => { console.log(`Error getting Rime Context: ${e}`); reject(e); });
+              resolve(punctResponse);
+            } else {
+              while (isLowerAlpha(singleChar) && offset != 0) {
+                inputString = singleChar + inputString;
+                offset -= 1;
+                singleChar = getPrevSingleChar(offset);
+              }
+              // Special treat for camelCase naming
+              if (isUpperAlpha(singleChar)) {
+                inputString = '';
+              }
+              inputRange.start = document.positionAt(offset);
+              while (splitCharset.includes(singleChar) === false && offset != 0) {
+                contextString = singleChar + contextString;
+                offset -= 1;
+                singleChar = getPrevSingleChar(offset);
+              }
+              rimeCLI.getContext(inputString).then((res) => {
+                if (res != null && 'menu' in res && res.menu != null && 'candidates' in res.menu && res.menu.candidates != null) {
+                  resolve({
+                    items: res.menu.candidates.map(candidate => {
+                      return {
+                        label: contextString + candidate.text,
+                        sortText: contextString + inputString + candidate.label.toString().padStart(8, '0'),
+                        filterText: contextString + inputString,
+                        textEdit: { range: inputRange, newText: candidate.text, }
+                      };
+                    }),
+                    isIncomplete: false,
+                  });
+                } else {
+                  resolve(emptyResponse);
+                }
+              }).catch((e) => { console.log(`Error getting Rime Context: ${e}`); reject(e); });
+            }
           } else { // offset === 0
             resolve(emptyResponse);
           }
