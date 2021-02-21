@@ -72,13 +72,14 @@ export async function activate(context: ExtensionContext): Promise<void> {
             ['|', ['｜']],
             ['^', ['……']],
             ['~', ['～']],
+            ['-', ['——']],
           ]);
           let offset = document.offsetAt(position);
           if (offset != 0 && rimeCLI.getCompletionStatus()) {
             let inputString = '';
             let contextString = '';
             let inputRange: Range = { start: position, end: position, };
-            const splitCharset = ' \n\r\t/\/,.()[]<>，。？！：；、“”‘’《〈«‹˂》〉»›˃（）「【〔［〚」】〕］〛｛｝￥｜……～';
+            const splitCharset = ' \n\r\t/\/,.()[]<>，。？！：；、“”‘’《〈«‹˂》〉»›˃（）「【〔［〚」】〕］〛｛｝￥｜……～—';
             const getPrevSingleChar = (offset: number): string => {
               return document.getText({
                 start: document.positionAt(offset - 1),
