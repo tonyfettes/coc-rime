@@ -4,7 +4,7 @@ Rime input method integration of coc.nvim
 
 [中文 README](https://github.com/tonyfettes/coc-rime/blob/master/README.zh_cn.md)
 
-![screenshot](https://user-images.githubusercontent.com/29998228/95216680-f1974680-0824-11eb-94cb-83a8d9a5b59d.gif)
+![screenshot](https://user-images.githubusercontent.com/29998228/111900984-6c20ef00-8a70-11eb-9920-4d9da5102a48.gif)
 
 ## Prerequisite
 

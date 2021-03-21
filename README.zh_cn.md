@@ -2,7 +2,7 @@
 
 Rime 输入法的 coc.nvim 集成
 
-![截图](https://user-images.githubusercontent.com/29998228/95216680-f1974680-0824-11eb-94cb-83a8d9a5b59d.gif)
+![截图](https://user-images.githubusercontent.com/29998228/111900984-6c20ef00-8a70-11eb-9920-4d9da5102a48.gif)
 
 ## 写在前面
 
