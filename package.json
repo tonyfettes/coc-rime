@@ -1,6 +1,6 @@
 {
   "name": "coc-rime",
-  "version": "0.1.2-alpha",
+  "version": "0.1.3-alpha",
   "description": "Rime input method integration of coc.nvim",
   "author": "Tony Fettes <feihaoxiang2014@gmail.com>",
   "license": "MIT",
