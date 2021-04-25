@@ -14,10 +14,12 @@ export async function activate(context: ExtensionContext): Promise<void> {
     window.showMessage(`Failed to install/find rime-cli: ${e}`, 'error');
   });
   rimeCLI.setCompletionStatus(userConfig.enabled);
-  rimeCLI.setSchema(userConfig.schemaId);
+  if (userConfig.enabled) {
+    rimeCLI.setSchema(userConfig.schemaId);
+  }
   const statusBarItem = window.createStatusBarItem(0, { progress: false });
   statusBarItem.text = 'ㄓ';
-  if (userConfig.enabled === true) {
+  if (userConfig.enabled) {
     statusBarItem.show();
   }
 
@@ -25,6 +27,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
     // Commands
     commands.registerCommand('rime.enable', async () => {
       rimeCLI.setCompletionStatus(true);
+      rimeCLI.setSchema(userConfig.schemaId);
       statusBarItem.show();
     }),
 
@@ -36,6 +39,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
     commands.registerCommand('rime.toggle', async () => {
       rimeCLI.toggleCompletionStatus();
       if (rimeCLI.getCompletionStatus()) {
+        rimeCLI.setSchema(userConfig.schemaId);
         statusBarItem.show();
       } else {
         statusBarItem.hide();

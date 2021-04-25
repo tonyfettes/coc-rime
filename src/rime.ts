@@ -204,8 +204,7 @@ export class RimeCLI {
           reject(e);
         });
       } catch(e) {
-        console.log(`Error parse the response: ${e}`);
-        resolve(null);
+        reject(`Error parse the response: ${e}`);
       }
     })
   }
