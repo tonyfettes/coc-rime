@@ -72,8 +72,19 @@
         },
         "rime.binaryPath": {
           "type": "string",
-          "default": "/usr/bin/rime-cli",
           "description": "Path of binary executive file of rime-cli"
+        },
+        "rime.sharedDataDir": {
+          "type": "string",
+          "description": "shared data directory of rime. By default it will search some paths: `/usr/share/rime-data`, ..."
+        },
+        "rime.userDataDir": {
+          "type": "string",
+          "description": "user data directory of rime. By default it will search some paths: `~/.config/ibus/rime`, ..."
+        },
+        "rime.logDir": {
+          "type": "string",
+          "description": "log directory of rime. A non-existent directory will disable logging. By default it will be `~/.config/coc/extensions/coc-rime-data`"
         }
       }
     },
