@@ -16,8 +16,8 @@
     "lint": "eslint src --ext ts",
     "clean": "rimraf lib",
     "watch": "node esbuild.js --watch",
-    "build": "node esbuild.js",
-    "prepare": "npm-run-all clean build"
+    "prepack": "node esbuild.js",
+    "prepare": "npm-run-all clean prepack"
   },
   "prettier": {
     "singleQuote": true,
