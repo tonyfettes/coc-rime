@@ -1,10 +1,7 @@
 import {ChildProcess, spawn} from 'child_process';
 import {ReadLine, createInterface} from 'readline';
 import {Mutex} from 'async-mutex';
-import download from './download';
 import fs from 'fs';
-import mkdirp from 'mkdirp';
-import {window} from 'coc.nvim';
 
 export enum RimeRequestType {IOError, Invalid, Schema, Context};
 
@@ -75,58 +72,10 @@ export class RimeCLI {
   private rl: ReadLine
   private schemaList: RimeSchema[]
 
-  constructor(binaryPath?: string) {
-    this.binaryPath = binaryPath || '/usr/bin/rime-cli';
+  constructor(binaryPath: string) {
+    this.binaryPath = binaryPath;
     this.childDead = false;
     this.isEnabled = true;
-  }
-
-  public async installRimeCLI(root: string): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      try {
-        if (process.arch != "x64" || process.platform != "linux") {
-          reject(`Sorry, the platform ${process.platform}-${process.arch} is not supported by rime-cli.`);
-        }
-        if (fs.existsSync(this.binaryPath)) {
-          resolve();
-          return;
-        }
-        if (!fs.existsSync(root)) {
-          mkdirp.sync(root);
-        }
-        const binaryName = 'rime-cli';
-        const dest = root + binaryName;
-        if (!fs.existsSync(dest)) {
-          const binaryUrl = `https://github.com/tonyfettes/rime-cli/releases/download/v0.0.1-alpha/rime-cli-x86_64-linux`;
-          const item = window.createStatusBarItem(0, { progress: true });
-          item.text = `Downloading ${binaryName}`;
-          item.show();
-          download(binaryUrl, dest, (percent) => {
-            item.text = `Downloading ${binaryName} ${(percent * 100).toFixed(0)}%`;
-          })
-          .then(() => {
-            try {
-              fs.chmodSync(dest, 0o755);
-              this.binaryPath = dest;
-            } catch (e) {
-              window.showMessage(`Error setting the permission: ${e}`, `error`);
-              reject(e);
-            } finally {
-              item.dispose();
-            }
-          })
-          .catch((e) => {
-            window.showMessage(`Error downloading ${binaryName}: ${e}`);
-            reject(e);
-          });
-        } else {
-          this.binaryPath = dest;
-          resolve();
-        }
-      } catch (e) {
-        reject(e);
-      }
-    });
   }
 
   public async setCompletionStatus(status: boolean): Promise<boolean> {

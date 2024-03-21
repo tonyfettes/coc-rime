@@ -5,14 +5,15 @@ import SchemaList from './lists';
 import {RimeCLI} from './rime';
 import {Config} from './config';
 import {isLowerAlpha, isUpperAlpha} from './ctype';
+import * as fs from 'fs';
+import { resolve } from 'path';
 
 export async function activate(context: ExtensionContext): Promise<void> {
   const userConfig = new Config();
+  let binaryPath = fs.existsSync(userConfig.binaryPath) ? userConfig.binaryPath
+    : resolve(context.extensionPath, 'build', 'Release', 'rime_cli');
 
-  const rimeCLI: RimeCLI = new RimeCLI(userConfig.binaryPath);
-  await rimeCLI.installRimeCLI(context.storagePath + '/').catch((e) => {
-    window.showMessage(`Failed to install/find rime-cli: ${e}`, 'error');
-  });
+  const rimeCLI: RimeCLI = new RimeCLI(binaryPath);
   rimeCLI.setCompletionStatus(userConfig.enabled);
   if (userConfig.enabled) {
     rimeCLI.setSchema(userConfig.schemaId);
