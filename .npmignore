@@ -1,0 +1,7 @@
+/*
+!/README.md
+!/package.json
+!/lib/
+*.map
+!/binding.gyp
+!/rime-cli.c
