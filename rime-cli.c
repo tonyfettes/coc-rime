@@ -1,3 +1,4 @@
+#include <err.h>
 #include <signal.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -30,10 +31,6 @@ typedef struct _RimeRequest {
 static volatile sig_atomic_t done = 0;
 
 static void signal_handler(int sig);
-static char *get_xdg_data_home();
-static char *get_user_data_dir();
-static char *get_xdg_cache_home();
-static char *get_user_cache_dir();
 static RimeRequest get_request();
 
 // Schema Management
@@ -46,25 +43,25 @@ static bool get_context_request(json_object *root, int keycode[DEFAULT_BUFFER_SI
                                 int *num_keycode, int *modifiers);
 static char *get_context_response(RimeSessionId session_id);
 
-int main() {
+int main(int argc, char *argv[]) {
+  if (argc < 4)
+    errx(EXIT_FAILURE, "usage: %s shared_data_dir user_data_dir log_dir", argv[0]);
   struct sigaction act;
   memset(&act, 0, sizeof(act));
   act.sa_handler = signal_handler;
   sigaction(SIGINT, &act, NULL);
   sigaction(SIGTERM, &act, NULL);
 
-  char *user_data_dir = get_user_data_dir();
   RIME_STRUCT(RimeTraits, rime_traits);
-  rime_traits.shared_data_dir = RIME_SHARED_DATA_DIR;
-  rime_traits.user_data_dir = user_data_dir;
+  rime_traits.shared_data_dir = argv[1];
+  rime_traits.user_data_dir = argv[2];
+  rime_traits.log_dir = argv[3];
   rime_traits.distribution_name = "Rime";
   rime_traits.distribution_code_name = PROJECT_NAME;
   rime_traits.distribution_version = PROJECT_VERSION;
   rime_traits.app_name = "rime." PROJECT_NAME;
-  rime_traits.log_dir = get_user_cache_dir();
   RimeSetup(&rime_traits);
   RimeInitialize(&rime_traits);
-  free(user_data_dir);
   RimeStartMaintenance(false);
   RimeSessionId session_id = RimeCreateSession();
 
@@ -109,50 +106,6 @@ int main() {
 }
 
 static void signal_handler(int sig) { done = 1; }
-
-static char *get_xdg_data_home() {
-  const char *xdg_data_home = getenv("XDG_DATA_HOME");
-  if (xdg_data_home) {
-    return strdup(xdg_data_home);
-  } else {
-    const char *home = getenv("HOME");
-    char *path = malloc(strlen(home) + strlen("/.local/share") + 1);
-    strcpy(path, home);
-    strcat(path, "/.local/share");
-    return path;
-  }
-}
-
-static char *get_xdg_cache_home() {
-  const char *xdg_cache_home = getenv("XDG_CACHE_HOME");
-  if (xdg_cache_home) {
-    return strdup(xdg_cache_home);
-  } else {
-    const char *home = getenv("HOME");
-    char *path = malloc(strlen(home) + strlen("/.local/share") + 1);
-    strcpy(path, home);
-    strcat(path, "/.local/share");
-    return path;
-  }
-}
-
-static char *get_user_data_dir() {
-  char *xdg_data_home = get_xdg_data_home();
-  char *path = malloc(strlen(xdg_data_home) + strlen("/" PROJECT_NAME) + 1);
-  strcpy(path, xdg_data_home);
-  strcat(path, "/" PROJECT_NAME);
-  free(xdg_data_home);
-  return path;
-}
-
-static char *get_user_cache_dir() {
-  char *xdg_cache_home = get_xdg_cache_home();
-  char *path = malloc(strlen(xdg_cache_home) + strlen("/" PROJECT_NAME) + 1);
-  strcpy(path, xdg_cache_home);
-  strcat(path, "/" PROJECT_NAME);
-  free(xdg_cache_home);
-  return path;
-}
 
 // JSON API Design
 //
