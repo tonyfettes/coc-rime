@@ -16,10 +16,10 @@ export function isAlpha(char: string): boolean {
   return (_isAlpha(char) != 0) as boolean;
 }
 
-export function isLowerAlpha (char: string): boolean {
+export function isLowerAlpha(char: string): boolean {
   return _isAlpha(char) === -1;
 }
 
-export function isUpperAlpha (char: string): boolean {
+export function isUpperAlpha(char: string): boolean {
   return _isAlpha(char) === 1;
 }

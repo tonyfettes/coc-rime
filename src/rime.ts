@@ -1,76 +1,86 @@
-import {ChildProcess, spawn} from 'child_process';
-import {ReadLine, createInterface} from 'readline';
-import {Mutex} from 'async-mutex';
+import { ChildProcess, spawn } from 'child_process';
+import { ReadLine, createInterface } from 'readline';
+import { Mutex } from 'async-mutex';
 import fs from 'fs';
 
-export enum RimeRequestType {IOError, Invalid, Schema, Context};
+export enum RimeRequestType {
+  IOError,
+  Invalid,
+  Schema,
+  Context,
+}
 
 export interface RimeRequest {
-  type: RimeRequestType,
-  content: RimeContextRequest | RimeSchemaRequest,
+  type: RimeRequestType;
+  content: RimeContextRequest | RimeSchemaRequest;
 }
 
 export interface RimeComposition {
-  length: number,
-  cursorPos: number,
-  selStart: number,
-  selEnd: number,
-  preEdit: string,
+  length: number;
+  cursorPos: number;
+  selStart: number;
+  selEnd: number;
+  preEdit: string;
 }
 
 export interface RimeCandidate {
-  text: string,
-  comment: string,
-  label: number,
+  text: string;
+  comment: string;
+  label: number;
 }
 
 export interface RimeMenu {
-  pageSize: number,
-  pageNo: number,
-  isLastPage: boolean,
-  highlightedCandidateIndex: number,
-  numCandidates: number,
-  candidates: RimeCandidate[],
-  selectKeys: string,
+  pageSize: number;
+  pageNo: number;
+  isLastPage: boolean;
+  highlightedCandidateIndex: number;
+  numCandidates: number;
+  candidates: RimeCandidate[];
+  selectKeys: string;
 }
 
 export interface RimeCommit {
-  text: string,
+  text: string;
 }
 
 export interface RimeContext {
-  composition: RimeComposition,
-  menu: RimeMenu,
-  commitTextPreview: string,
-  selectLabels: string[],
+  composition: RimeComposition;
+  menu: RimeMenu;
+  commitTextPreview: string;
+  selectLabels: string[];
 }
 
 export interface RimeContextRequest {
-  keyCode: number[],
-  modifiers: number,
+  keyCode: number[];
+  modifiers: number;
 }
 
-export enum RimeSchemaRequestAction {Nop, GetCurrent, GetList, Select};
+export enum RimeSchemaRequestAction {
+  Nop,
+  GetCurrent,
+  GetList,
+  Select,
+}
 
 export interface RimeSchemaRequest {
-  action: RimeSchemaRequestAction,
-  schemaId: string,
+  action: RimeSchemaRequestAction;
+  schemaId: string;
 }
 
 export interface RimeSchema {
-  schemaId: string,
-  name: string,
+  schemaId: string;
+  name: string;
 }
 
 export class RimeCLI {
-  private isEnabled: boolean
-  private childDead: boolean
-  private binaryPath: string
-  private mutex: Mutex = new Mutex()
-  private numRestarts = 0
-  private proc: ChildProcess
-  private rl: ReadLine
-  private schemaList: RimeSchema[]
+  private isEnabled: boolean;
+  private childDead: boolean;
+  private binaryPath: string;
+  private mutex: Mutex = new Mutex();
+  private numRestarts = 0;
+  private proc: ChildProcess;
+  private rl: ReadLine;
+  private schemaList: RimeSchema[];
 
   constructor(binaryPath: string) {
     this.binaryPath = binaryPath;
@@ -83,7 +93,7 @@ export class RimeCLI {
       try {
         this.isEnabled = status;
         resolve(this.isEnabled);
-      } catch(e) {
+      } catch (e) {
         reject(e);
       }
     });
@@ -94,7 +104,7 @@ export class RimeCLI {
       try {
         this.isEnabled = !this.isEnabled;
         resolve(this.isEnabled);
-      } catch(e) {
+      } catch (e) {
         reject(e);
       }
     });
@@ -111,7 +121,7 @@ export class RimeCLI {
         let grouped_request: RimeContextRequest = {
           keyCode: [],
           modifiers: 0,
-        }
+        };
         const KEYCODE_ESCAPE = 0xff1b;
         grouped_request.keyCode.push(KEYCODE_ESCAPE);
         for (const singleChar of input) {
@@ -120,13 +130,15 @@ export class RimeCLI {
         this.request({
           type: RimeRequestType.Context,
           content: grouped_request,
-        }).then((res) => {
-          resolve(res)
-        }).catch((e) => {
-          reject(e)
         })
-      } catch(e) {
-        reject(e)
+          .then((res) => {
+            resolve(res);
+          })
+          .catch((e) => {
+            reject(e);
+          });
+      } catch (e) {
+        reject(e);
       }
     });
   }
@@ -141,21 +153,21 @@ export class RimeCLI {
             schemaId: '',
           },
         })
-        .then((res) => {
-          if ('schemaList' in res && res.schemaList !== null) {
-            this.schemaList = res.schemaList;
-          } else {
-            this.schemaList = [];
-          }
-          resolve(this.schemaList);
-        })
-        .catch((e) => {
-          reject(e);
-        });
-      } catch(e) {
+          .then((res) => {
+            if ('schemaList' in res && res.schemaList !== null) {
+              this.schemaList = res.schemaList;
+            } else {
+              this.schemaList = [];
+            }
+            resolve(this.schemaList);
+          })
+          .catch((e) => {
+            reject(e);
+          });
+      } catch (e) {
         reject(`Error parse the response: ${e}`);
       }
-    })
+    });
   }
 
   public async getSchema(): Promise<string> {
@@ -165,18 +177,18 @@ export class RimeCLI {
         content: <RimeSchemaRequest>{
           action: RimeSchemaRequestAction.GetCurrent,
           schemaId: '',
-        }
+        },
       })
-      .then((res) => {
-        if ('schemaId' in res && res.schemaId != null) {
-          resolve(res.schemaId);
-        } else {
-          reject('Invalid response');
-        }
-      })
-      .catch((e) => {
-        reject(e);
-      });
+        .then((res) => {
+          if ('schemaId' in res && res.schemaId != null) {
+            resolve(res.schemaId);
+          } else {
+            reject('Invalid response');
+          }
+        })
+        .catch((e) => {
+          reject(e);
+        });
     });
   }
 
@@ -187,18 +199,18 @@ export class RimeCLI {
         content: <RimeSchemaRequest>{
           action: RimeSchemaRequestAction.Select,
           schemaId: schemaId,
-        }
+        },
       })
-      .then((res) => {
-        if ('success' in res && res.success == true) {
-          resolve();
-        } else {
-          reject(`rime-cli reports error.`);
-        }
-      })
-      .catch((e) => {
-        reject(e);
-      });
+        .then((res) => {
+          if ('success' in res && res.success == true) {
+            resolve();
+          } else {
+            reject(`rime-cli reports error.`);
+          }
+        })
+        .catch((e) => {
+          reject(e);
+        });
     });
   }
 
@@ -221,7 +233,7 @@ export class RimeCLI {
         if (!this.isChildAlive()) {
           reject(new Error('rime-cli process is dead.'));
         }
-        this.rl.once('line', response => {
+        this.rl.once('line', (response) => {
           let any_response: any = JSON.parse(response.toString());
           //let candidateItems: string[] = []
           if (any_response === null || any_response === undefined) {
@@ -229,17 +241,17 @@ export class RimeCLI {
           } else {
             resolve(any_response);
           }
-        })
+        });
         this.proc.stdin.write(JSON.stringify(rimeRequest) + '\n', 'utf8');
       } catch (e) {
         console.log(`Error interacting with rime-cli: ${e}`);
         reject(e);
       }
-    })
+    });
   }
 
   private isChildAlive(): boolean {
-    return this.proc && !this.childDead
+    return this.proc && !this.childDead;
   }
 
   private restartChild(): void {
@@ -259,11 +271,11 @@ export class RimeCLI {
     this.proc.on('exit', () => {
       this.childDead = true;
     });
-    this.proc.stdin.on('error', error => {
-      console.log(`stdin error: ${error}`)
+    this.proc.stdin.on('error', (error) => {
+      console.log(`stdin error: ${error}`);
       this.childDead = true;
     });
-    this.proc.stdout.on('error', error => {
+    this.proc.stdout.on('error', (error) => {
       // tslint:disable-next-line: no-console
       console.log(`stdout error: ${error}`);
       this.childDead = true;
@@ -271,7 +283,7 @@ export class RimeCLI {
     this.proc.unref(); // As I understand it, this lets Node exit without waiting for the child
     this.rl = createInterface({
       input: this.proc.stdout,
-      output: this.proc.stdin
+      output: this.proc.stdin,
     });
   }
 }
