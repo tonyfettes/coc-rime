@@ -1,4 +1,3 @@
-# gyp binding.gyp --depth=. --generator-output=build
 {  # noqa: B018 # type: ignore
     "targets": [
         {
