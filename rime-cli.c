@@ -50,9 +50,7 @@ int main(int argc, char *argv[]) {
   if (argc < 4)
     errx(EXIT_FAILURE, "usage: %s shared_data_dir user_data_dir log_dir",
          argv[0]);
-  struct sigaction act;
-  memset(&act, 0, sizeof(act));
-  act.sa_handler = signal_handler;
+  struct sigaction act = {.sa_handler = signal_handler};
   sigaction(SIGINT, &act, NULL);
   sigaction(SIGTERM, &act, NULL);
 
@@ -126,9 +124,7 @@ static void signal_handler(int sig) { done = 1; }
 // ```
 
 static RimeRequest get_request() {
-  RimeRequest req;
-  req.root = NULL;
-  req.type = Invalid;
+  RimeRequest req = {.type = Invalid};
   char str[DEFAULT_BUFFER_SIZE];
   if (!fgets(str, DEFAULT_BUFFER_SIZE, stdin)) {
     req.type = IOError;
