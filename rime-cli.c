@@ -36,16 +36,20 @@ static RimeRequest get_request();
 // Schema Management
 static bool get_schema_request(json_object *root, RimeRequestAction *action,
                                const char **schema_id);
-static char *get_schema_response(RimeSessionId session_id, RimeRequestAction action, const char * schema_id);
+static char *get_schema_response(RimeSessionId session_id,
+                                 RimeRequestAction action,
+                                 const char *schema_id);
 
 // Context (Candidate list)
-static bool get_context_request(json_object *root, int keycode[DEFAULT_BUFFER_SIZE],
+static bool get_context_request(json_object *root,
+                                int keycode[DEFAULT_BUFFER_SIZE],
                                 int *num_keycode, int *modifiers);
 static char *get_context_response(RimeSessionId session_id);
 
 int main(int argc, char *argv[]) {
   if (argc < 4)
-    errx(EXIT_FAILURE, "usage: %s shared_data_dir user_data_dir log_dir", argv[0]);
+    errx(EXIT_FAILURE, "usage: %s shared_data_dir user_data_dir log_dir",
+         argv[0]);
   struct sigaction act;
   memset(&act, 0, sizeof(act));
   act.sa_handler = signal_handler;
@@ -183,9 +187,7 @@ static char *get_schema_response(RimeSessionId session_id,
   if (action == GetCurrent) {
     char buffer[DEFAULT_BUFFER_SIZE];
     if (RimeGetCurrentSchema(session_id, buffer, DEFAULT_BUFFER_SIZE)) {
-      json_object_object_add(
-          root, "schemaId",
-          json_object_new_string(buffer));
+      json_object_object_add(root, "schemaId", json_object_new_string(buffer));
     }
   } else if (action == GetList) {
     json_object *schema_list_json = NULL;
@@ -197,7 +199,8 @@ static char *get_schema_response(RimeSessionId session_id,
         json_object_object_add(
             schema_item, "schemaId",
             json_object_new_string(schema_list.list[i].schema_id));
-        json_object_object_add(schema_item, "name",
+        json_object_object_add(
+            schema_item, "name",
             json_object_new_string(schema_list.list[i].name));
         json_object_array_add(schema_list_json, schema_item);
       }
@@ -207,14 +210,16 @@ static char *get_schema_response(RimeSessionId session_id,
   } else if (action == Select) {
     json_bool is_success = false;
     is_success = RimeSelectSchema(session_id, schema_id);
-    json_object_object_add(root, "success", json_object_new_boolean(is_success));
+    json_object_object_add(root, "success",
+                           json_object_new_boolean(is_success));
   }
   ret = strdup(json_object_to_json_string_ext(root, JSON_C_TO_STRING_PLAIN));
   json_object_put(root);
   return ret;
 }
 
-static bool get_context_request(json_object *root, int keycode[DEFAULT_BUFFER_SIZE],
+static bool get_context_request(json_object *root,
+                                int keycode[DEFAULT_BUFFER_SIZE],
                                 int *num_keycode, int *modifiers) {
   json_object *keycode_obj;
   json_object *modifiers_obj;
