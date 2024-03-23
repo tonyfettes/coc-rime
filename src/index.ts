@@ -5,16 +5,18 @@ import SchemaList from './lists';
 import { RimeCLI } from './rime';
 import { Config } from './config';
 import { isLowerAlpha, isUpperAlpha } from './ctype';
-import * as fs from 'fs';
 import { resolve } from 'path';
 
 export async function activate(context: ExtensionContext): Promise<void> {
   const userConfig = new Config();
-  let binaryPath = fs.existsSync(userConfig.binaryPath)
-    ? userConfig.binaryPath
-    : resolve(context.extensionPath, 'build', 'Release', 'rime_cli');
+  let binaryPath = userConfig.binaryPath;
+  if (binaryPath === '')
+    binaryPath = resolve(context.extensionPath, 'build', 'Release', 'rime_cli')
+  let args = userConfig.args;
+  if (args[2] === '')
+    args[2] = context.storagePath;
 
-  const rimeCLI: RimeCLI = new RimeCLI(binaryPath);
+  const rimeCLI: RimeCLI = new RimeCLI(binaryPath, args);
   rimeCLI.setCompletionStatus(userConfig.enabled);
   if (userConfig.enabled) {
     rimeCLI.setSchema(userConfig.schemaId);

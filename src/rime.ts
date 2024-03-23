@@ -76,14 +76,16 @@ export class RimeCLI {
   private isEnabled: boolean;
   private childDead: boolean;
   private binaryPath: string;
+  private args: string[];
   private mutex: Mutex = new Mutex();
   private numRestarts = 0;
   private proc: ChildProcess;
   private rl: ReadLine;
   private schemaList: RimeSchema[];
 
-  constructor(binaryPath: string) {
+  constructor(binaryPath: string, args?: string[]) {
     this.binaryPath = binaryPath;
+    this.args = args ?? [];
     this.childDead = false;
     this.isEnabled = true;
   }
@@ -263,7 +265,7 @@ export class RimeCLI {
       this.proc.kill();
     }
 
-    const args = [];
+    const args = this.args;
     const binaryPath = this.binaryPath;
 
     this.proc = spawn(binaryPath, args);
