@@ -154,7 +154,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
                             textEdit: { range: inputRange, newText: candidate.text },
                           };
                         }),
-                        isIncomplete: false,
+                        isIncomplete: true,
                       });
                     } else {
                       resolve(emptyResponse);
