@@ -54,7 +54,7 @@
       "properties": {
         "rime.enabled": {
           "type": "boolean",
-          "default": true,
+          "default": false,
           "description": "Enable coc-rime extension"
         },
         "rime.schemaId": {
