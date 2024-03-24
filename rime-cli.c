@@ -75,7 +75,6 @@ int main(int argc, char *argv[]) {
     char *outstr = strdup("null");
     if (req.type == IOError) {
       break;
-    } else if (req.type == Invalid) {
     } else if (req.type == Schema) {
       const char *schema_id = NULL;
       RimeRequestAction schema_action;
@@ -93,18 +92,15 @@ int main(int argc, char *argv[]) {
       if (status) {
         outstr = get_context_response(session_id);
       } // otherwise, outstr will point to "null".
-    } else {
     }
     puts(outstr);
-    if (outstr != NULL) {
-      free(outstr);
-    }
+    free(outstr);
     fflush(stdout);
   }
 
   RimeDestroySession(session_id);
   RimeFinalize();
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 static void signal_handler(int sig) { done = 1; }
@@ -251,8 +247,6 @@ static bool get_context_request(json_object *root,
 
 static char *get_context_response(RimeSessionId session_id) {
   json_object *root = json_object_new_object();
-
-  json_object *commit_json = NULL;
 
   json_object *composition_json = NULL;
   json_object *menu_json = NULL;
