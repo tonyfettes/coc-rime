@@ -62,6 +62,11 @@
           "default": "luna_pinyin",
           "description": "Rime schema selected when startup"
         },
+        "rime.shortcut": {
+          "type": "string",
+          "default": "ㄓ",
+          "description": "Rime source shortcut"
+        },
         "rime.priority": {
           "type": "number",
           "default": 0,

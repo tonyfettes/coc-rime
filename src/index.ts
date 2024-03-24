@@ -22,7 +22,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
     rimeCLI.setSchema(userConfig.schemaId);
   }
   const statusBarItem = window.createStatusBarItem(0, { progress: false });
-  statusBarItem.text = 'ㄓ';
+  statusBarItem.text = userConfig.shortcut;
   if (userConfig.enabled) {
     statusBarItem.show();
   }
@@ -53,7 +53,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
     // Completion Source
     languages.registerCompletionItemProvider(
       'rime',
-      'IM',
+      userConfig.shortcut,
       null,
       {
         async provideCompletionItems(

@@ -27,6 +27,9 @@ export class Config {
   get binaryPath() {
     return this.cfg.get<string>('binaryPath');
   }
+  get shortcut() {
+    return this.cfg.get<string>('shortcut');
+  }
   get args() {
     let shared_data_dir = this.cfg.get<string>('sharedDataDir');
     if (shared_data_dir === '')
