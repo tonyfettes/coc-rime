@@ -93,10 +93,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
             let offset = document.offsetAt(position);
             if (offset != 0 && rimeCLI.getCompletionStatus()) {
               let inputString = '';
-              let contextString = '';
               let inputRange: Range = { start: position, end: position };
-              const splitCharset =
-                ' \n\r\t//,.()[]{}<>，。？！：；、“”‘’《〈«‹˂》〉»›˃（）「【〔［〚」】〕］〛｛｝￥｜……～—';
               const getPrevSingleChar = (offset: number): string => {
                 return document.getText({
                   start: document.positionAt(offset - 1),
@@ -119,7 +116,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
                 }
                 resolve(punctResponse);
               } else {
-                while (/[a-z;]/.test(singleChar) && offset != 0) {
+                while (/[!-@\[-~]/.test(singleChar) && offset != 0) {
                   inputString = singleChar + inputString;
                   offset -= 1;
                   singleChar = getPrevSingleChar(offset);
@@ -129,11 +126,6 @@ export async function activate(context: ExtensionContext): Promise<void> {
                   inputString = '';
                 }
                 inputRange.start = document.positionAt(offset);
-                while (splitCharset.includes(singleChar) === false && offset != 0) {
-                  contextString = singleChar + contextString;
-                  offset -= 1;
-                  singleChar = getPrevSingleChar(offset);
-                }
                 rimeCLI
                   .getContext(inputString)
                   .then((res) => {
@@ -147,9 +139,9 @@ export async function activate(context: ExtensionContext): Promise<void> {
                       resolve({
                         items: res.menu.candidates.map((candidate) => {
                           return {
-                            label: contextString + candidate.text,
-                            sortText: contextString + inputString + candidate.label.toString().padStart(8, '0'),
-                            filterText: contextString + inputString,
+                            label: candidate.text,
+                            sortText: String.fromCharCode(candidate.label),
+                            filterText: inputString,
                             textEdit: { range: inputRange, newText: candidate.text },
                           };
                         }),
