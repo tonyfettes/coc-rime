@@ -4,7 +4,6 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import SchemaList from './lists';
 import { RimeCLI } from './rime';
 import { Config } from './config';
-import { isLowerAlpha, isUpperAlpha } from './ctype';
 import { resolve } from 'path';
 
 export async function activate(context: ExtensionContext): Promise<void> {
@@ -120,13 +119,13 @@ export async function activate(context: ExtensionContext): Promise<void> {
                 }
                 resolve(punctResponse);
               } else {
-                while (isLowerAlpha(singleChar) && offset != 0) {
+                while (/[a-z;]/.test(singleChar) && offset != 0) {
                   inputString = singleChar + inputString;
                   offset -= 1;
                   singleChar = getPrevSingleChar(offset);
                 }
                 // Special treat for camelCase naming
-                if (isUpperAlpha(singleChar)) {
+                if (/[A-Z]/.test(singleChar)) {
                   inputString = '';
                 }
                 inputRange.start = document.positionAt(offset);
