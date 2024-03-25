@@ -69,7 +69,7 @@
         },
         "rime.priority": {
           "type": "number",
-          "default": 0,
+          "default": 2,
           "description": "Priority of Rime completion source"
         },
         "rime.binaryPath": {
