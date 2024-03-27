@@ -5,12 +5,15 @@ import SchemaList from './lists';
 import { RimeCLI } from './rime';
 import { Config } from './config';
 import { resolve } from 'path';
+import { existsSync } from 'fs';
 
 export async function activate(context: ExtensionContext): Promise<void> {
   const userConfig = new Config();
   let binaryPath = userConfig.binaryPath;
   if (binaryPath === '')
     binaryPath = resolve(context.extensionPath, 'build', 'Release', 'rime_cli')
+  if (existsSync(binaryPath))
+    binaryPath = resolve(context.extensionPath, 'result', 'bin', 'rime_cli')
   let args = userConfig.args;
   if (args[2] === '')
     args[2] = context.storagePath;

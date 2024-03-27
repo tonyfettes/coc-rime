@@ -1,5 +1,6 @@
 compile_commands.json
 /lib/
+/result
 
 # create by https://github.com/iamcco/coc-gitignore (Thu Mar 21 2024 13:38:05 GMT+0800 (China Standard Time))
 # Node.gitignore:

@@ -1,4 +1,5 @@
 {  # noqa: B018 # type: ignore
+    # FIXME: Android need android_ndk_path
     # https://github.com/nodejs/gyp-next/issues/237
     "variables": {"android_ndk_path": ""},
     "targets": [
