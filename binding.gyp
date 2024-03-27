@@ -1,4 +1,6 @@
 {  # noqa: B018 # type: ignore
+    # https://github.com/nodejs/gyp-next/issues/237
+    "variables": {"android_ndk_path": ""},
     "targets": [
         {
             "target_name": "rime_cli",
