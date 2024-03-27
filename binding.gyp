@@ -17,6 +17,8 @@
                 "<!@(pkg-config --cflags rime json-c)",
             ],
             "ldflags": [
+                # https://stackoverflow.com/questions/45135/why-does-the-order-in-which-libraries-are-linked-sometimes-cause-errors-in-gcc/29457226#29457226
+                "-Wl,--start-group",
                 "<!@(pkg-config --libs rime json-c)",
             ]
         }
