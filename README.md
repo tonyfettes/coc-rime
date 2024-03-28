@@ -32,6 +32,7 @@ cd ~/.config/coc/extensions/node_modules/coc-rime
 npm rebuild
 # or
 # nix
+git init
 git add -A
 nix build
 ```
