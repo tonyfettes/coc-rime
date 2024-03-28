@@ -1,11 +1,12 @@
-import * as fs from 'fs';
+import * as process from 'process';
+import { existsSync, realpathSync } from 'fs';
 import { workspace, WorkspaceConfiguration } from 'coc.nvim';
 import untildify from 'untildify';
 
 function get_data_dir(...dirs: string[]): string {
   for (const dir of dirs) {
-    let data_dir = untildify(dir);
-    if (fs.existsSync(data_dir)) return data_dir;
+    let data_dir = realpathSync(untildify(dir));
+    if (existsSync(data_dir)) return data_dir;
   }
 }
 
@@ -34,9 +35,9 @@ export class Config {
     let shared_data_dir = this.cfg.get<string>('sharedDataDir');
     if (shared_data_dir === '')
       shared_data_dir = get_data_dir(
-        '/sdcard/rime-data',
+        (process.env.PREFIX ?? '/usr') + '/share/rime-data',
         '/run/current-system/sw/share/rime-data',
-        (process.env.PREFIX ?? '/usr') + '/share/rime-data'
+        '/sdcard/rime-data'
       );
 
     let user_data_dir = this.cfg.get<string>('userDataDir');
