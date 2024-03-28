@@ -63,17 +63,17 @@ You could use `CocList` to switch between schema.
      For `npm rebuild`
    - `~/.config/coc/extensions/node_modules/coc-rime/result/bin/rime_cli`: For
      `nix build`
-5. `rime.sharedDataDir`: By default, it will search:
+5. `rime.sharedDataDir`: by default, it will search:
    - `${PREFIX:-/usr}/share/rime-data`: for GNU/Linux
    - `/sdcard/rime-data`: for Android
    - `/run/current-system/sw/share/rime-data`: for NixOS
-6. `rime.userDataDir`: By default, it will search:
+6. `rime.userDataDir`: by default, it will search:
    - `~/.config/ibus/rime`: for ibus
    - `/sdcard/rime`: for trime
    - `~/.config/fcitx/rime`: for fcitx
    - `~/.local/share/fcitx5/rime`: for fcitx5
-7. `rime.logDir`: by default log is disabled.
-   `mkdir ~/.config/coc/extensions/coc-rime-data` to enable it.
+7. `rime.logDir`: by default, it will be
+   `~/.config/coc/extensions/coc-rime-data`
 
 ## License
 
