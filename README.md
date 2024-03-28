@@ -10,6 +10,17 @@ Rime input method integration of coc.nvim
 - [json-c](https://github.com/json-c/json-c)
 - [pkg-config](http://pkg-config.freedesktop.org/)
 
+```sh
+# Ubuntu
+sudo apt-get -y install pkg-config librime-dev libjson-c-dev librime1 libjson-c5
+# ArchLinux
+sudo pacman -S pkg-config librime json-c
+# Android Termux
+apt-get -y install pkg-config librime json-c
+# NixOS
+# don't need to install dependencies due to nix flake
+```
+
 ## Install
 
 - [coc-marketplace](https://github.com/fannheyward/coc-marketplace)
@@ -21,20 +32,6 @@ Rime input method integration of coc.nvim
 CocInstall coc-rime
 " or add the following code to your vimrc
 let g:coc_global_extensions = ['coc-rime', 'other coc-plugins']
-```
-
-Note: because <https://github.com/neoclide/coc.nvim/discussions/4960>, you must
-rebuild the package after `CocInstall`:
-
-```sh
-cd ~/.config/coc/extensions/node_modules/coc-rime
-# npm
-npm rebuild
-# or
-# nix
-git init
-git add -A
-nix build
 ```
 
 ## Commands
