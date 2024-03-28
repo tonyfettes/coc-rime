@@ -5,7 +5,7 @@ import SchemaList from './lists';
 import { RimeCLI } from './rime';
 import { Config } from './config';
 import { resolve } from 'path';
-import { mkdirSync, existsSync, realpathSync } from 'fs';
+import { stat, mkdirSync, existsSync, realpathSync } from 'fs';
 
 export async function activate(context: ExtensionContext): Promise<void> {
   const userConfig = new Config();
@@ -17,7 +17,9 @@ export async function activate(context: ExtensionContext): Promise<void> {
   // if logDir doesn't exist:
   // In GNU/Linux, log will be disabled
   // In Android, an ::__fs::filesystem::filesystem_error will be threw
-  mkdirSync(args[2]);
+  stat(args[2], (err, stats) => {
+    if (err) mkdirSync(args[2]);
+  });
 
   const rimeCLI: RimeCLI = new RimeCLI(binaryPath, args);
   rimeCLI.setCompletionStatus(userConfig.enabled);
