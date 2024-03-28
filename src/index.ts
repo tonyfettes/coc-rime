@@ -10,8 +10,16 @@ import { stat, mkdirSync, existsSync, realpathSync } from 'fs';
 export async function activate(context: ExtensionContext): Promise<void> {
   const userConfig = new Config();
   let binaryPath = userConfig.binaryPath;
-  if (binaryPath === '') binaryPath = realpathSync(resolve(context.extensionPath, 'build', 'Release', 'rime_cli'));
-  if (!existsSync(binaryPath)) binaryPath = realpathSync(resolve(context.extensionPath, 'result', 'bin', 'rime_cli'));
+  if (binaryPath === '') {
+    binaryPath = realpathSync(resolve(context.extensionPath, 'build', 'Release', 'rime_cli'));
+    if (!existsSync(binaryPath)) binaryPath = realpathSync(resolve(context.extensionPath, 'result', 'bin', 'rime_cli'));
+  }
+  if (!existsSync(binaryPath)) {
+    window.showInformationMessage(
+      `'rime.binaryPath' "${binaryPath}" cannot be found. Read README.md to know how to build it.`
+    );
+    return;
+  }
   let args = userConfig.args;
   if (args[2] === '') args[2] = context.storagePath;
   // if logDir doesn't exist:
