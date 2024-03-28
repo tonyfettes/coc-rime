@@ -2,8 +2,6 @@
 
 Rime input method integration of coc.nvim
 
-[中文 README](https://github.com/tonyfettes/coc-rime/blob/master/README.zh_cn.md)
-
 ![screenshot](https://user-images.githubusercontent.com/29998228/111900984-6c20ef00-8a70-11eb-9920-4d9da5102a48.gif)
 
 ## Dependencies
