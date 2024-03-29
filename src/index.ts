@@ -16,9 +16,9 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
   const rimeCLI: RimeCLI = new RimeCLI(binaryPath, args);
   rimeCLI.setCompletionStatus(userConfig.enabled);
-  if (userConfig.enabled) {
-    rimeCLI.setSchema(userConfig.schemaId);
-  }
+  rimeCLI.getSchema().then((schemaId) => {
+    if (schemaId !== userConfig.schemaId && userConfig.schemaId !== '') rimeCLI.setSchema(userConfig.schemaId);
+  });
   const statusBarItem = window.createStatusBarItem(0, { progress: false });
   statusBarItem.text = userConfig.shortcut;
   if (userConfig.enabled) {
@@ -29,7 +29,6 @@ export async function activate(context: ExtensionContext): Promise<void> {
     // Commands
     commands.registerCommand('rime.enable', async () => {
       rimeCLI.setCompletionStatus(true);
-      rimeCLI.setSchema(userConfig.schemaId);
       statusBarItem.show();
     }),
 
@@ -41,7 +40,6 @@ export async function activate(context: ExtensionContext): Promise<void> {
     commands.registerCommand('rime.toggle', async () => {
       rimeCLI.toggleCompletionStatus();
       if (rimeCLI.getCompletionStatus()) {
-        rimeCLI.setSchema(userConfig.schemaId);
         statusBarItem.show();
       } else {
         statusBarItem.hide();

@@ -59,7 +59,6 @@
         },
         "rime.schemaId": {
           "type": "string",
-          "default": "luna_pinyin",
           "description": "Rime schema selected when startup"
         },
         "rime.shortcut": {
