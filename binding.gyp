@@ -6,19 +6,27 @@
         {
             "target_name": "rime_cli",
             "type": "executable",
+            "include_dirs+": [
+                "<!@(echo ${CFLAGS:-`pkg-config rime json-c --cflags-only-I`} | sed s/-I//g)"
+            ],
             "sources": [
                 "rime-cli.c",
             ],
             "defines": [
-                "PROJECT_NAME=\"<!(node -p \"require('./package.json').name\")\"",
-                "PROJECT_VERSION=\"<!(node -p \"require('./package.json').version\")\"",
-             ],
+                'PROJECT_NAME="<!(node -p "require(\'./package.json\').name")"',
+                'PROJECT_VERSION="<!(node -p "require(\'./package.json\').version")"',
+            ],
             "cflags": [
                 "<!@(pkg-config --cflags rime json-c)",
             ],
             "ldflags": [
                 "<!@(pkg-config --libs rime json-c)",
             ],
+            "link_settings": {
+                "libraries": [
+                    "<!@(pkg-config --libs rime json-c)",
+                ],
+            },
             "conditions": [
                 [
                     "OS == 'linux'",
@@ -28,9 +36,9 @@
                         # gcc of Ubuntu needs it
                         # gcc of ArchLinux ignores it
                         "ldflags+": ["-Wl,--start-group"]
-                    }
+                    },
                 ]
-            ]
+            ],
         }
-    ]
+    ],
 }
