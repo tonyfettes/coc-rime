@@ -17,8 +17,11 @@ sudo apt-get -y install pkg-config librime-dev libjson-c-dev librime1 libjson-c5
 sudo pacman -S pkg-config librime json-c
 # Android Termux
 apt-get -y install pkg-config librime json-c
-# NixOS
-# don't need to install dependencies due to nix flake
+# Nix
+nix-env -iA nixos.pkg-config nixos.librime nixos.json-c
+# Brew
+brew tap tonyfettes/homebrew-rime
+brew install pkg-config rime json-c
 ```
 
 ## Install
