@@ -48,10 +48,10 @@ export class Config {
   }
   get binaryPath() {
     return new Promise<string>(async (res, reject) => {
-      let binaryPath = await get_dir(resolve(this.context.extensionPath, 'build', 'Release', 'rime_cli'));
+      let binaryPath = await get_dir(resolve(this.context.extensionPath, 'build', 'Release', 'rime.node'));
       if (binaryPath === '') {
         await execAsync(`npm rebuild`, { cwd: this.context.extensionPath });
-        binaryPath = await get_dir(resolve(this.context.extensionPath, 'build', 'Release', 'rime_cli'));
+        binaryPath = await get_dir(resolve(this.context.extensionPath, 'build', 'Release', 'rime.node'));
       }
       try {
         res(binaryPath);

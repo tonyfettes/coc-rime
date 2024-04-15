@@ -1,6 +1,7 @@
 /*
 !/lib/
 *.map
+!/prebuilds/
 !/binding.gyp
 !/rime-cli.c
 !/flake.nix

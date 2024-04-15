@@ -4,7 +4,7 @@
     "variables": {"android_ndk_path": ""},
     "targets": [
         {
-            "target_name": "rime_cli",
+            "target_name": "rime.node",
             "type": "executable",
             "sources": [
                 "rime-cli.c",
