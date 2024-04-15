@@ -41,24 +41,11 @@ export class Config {
     return new Promise<string>(async (res, reject) => {
       let binaryPath = this.cfg.get<string>('binaryPath');
       if (binaryPath === '') {
-        binaryPath = await get_dir(
-          resolve(this.context.extensionPath, 'build', 'Release', 'rime_cli'),
-          resolve(this.context.extensionPath, 'result', 'bin', 'rime_cli')
-        );
+        binaryPath = await get_dir(resolve(this.context.extensionPath, 'build', 'Release', 'rime_cli'));
       }
       if (binaryPath === '') {
-        try {
-          await access('/run/current-system/nixos-version', constants.R_OK);
-          await execAsync(`git init`, { cwd: this.context.extensionPath });
-          await execAsync(`git add -A`, { cwd: this.context.extensionPath });
-          await execAsync(`nix build`, { cwd: this.context.extensionPath });
-        } catch (e) {
-          await execAsync(`npm rebuild`, { cwd: this.context.extensionPath });
-        }
-        binaryPath = await get_dir(
-          resolve(this.context.extensionPath, 'build', 'Release', 'rime_cli'),
-          resolve(this.context.extensionPath, 'result', 'bin', 'rime_cli')
-        );
+        await execAsync(`npm rebuild`, { cwd: this.context.extensionPath });
+        binaryPath = await get_dir(resolve(this.context.extensionPath, 'build', 'Release', 'rime_cli'));
       }
       try {
         res(binaryPath);
