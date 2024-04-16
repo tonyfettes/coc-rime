@@ -4,20 +4,19 @@
     "variables": {"android_ndk_path": ""},
     "targets": [
         {
-            "target_name": "rime.node",
-            "type": "executable",
+            "target_name": "rime",
             "sources": [
-                "rime-cli.c",
+                "binding.c",
             ],
             "defines": [
                 "PROJECT_NAME=\"<!(node -p \"require('./package.json').name\")\"",
                 "PROJECT_VERSION=\"<!(node -p \"require('./package.json').version\")\"",
              ],
             "cflags": [
-                "<!@(pkg-config --cflags rime json-c)",
+                "<!@(pkg-config --cflags rime)",
             ],
             "ldflags": [
-                "<!@(pkg-config --libs rime json-c)",
+                "<!@(pkg-config --libs rime)",
             ],
             "conditions": [
                 [

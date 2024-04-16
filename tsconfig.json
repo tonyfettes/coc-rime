@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es2017",
-    "lib": ["es2017", "es2018"],
+    // BigInt literals are not available when targeting lower than ES2020.
+    "target": "es2020",
+    "lib": ["es2020"],
     "module": "commonjs",
     "declaration": false,
     "sourceMap": true,
