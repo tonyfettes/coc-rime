@@ -15,7 +15,7 @@ export default class SchemaList extends BasicList {
     this.rimeCLI = rimeCLI;
     this.addAction('open', (item: ListItem) => {
       this.rimeCLI
-        .setSchema(item.data.schemaId)
+        .setSchema(item.data.schema_id)
         .then((_) => {})
         .catch((e) => {
           console.log(`Error setting the schema: ${e}`);
@@ -23,8 +23,8 @@ export default class SchemaList extends BasicList {
         });
       this.rimeCLI
         .getSchema()
-        .then((schemaId) => {
-          window.showMessage(`Changed to schema ${schemaId}.`);
+        .then((schema_id) => {
+          window.showMessage(`Changed to schema ${schema_id}.`);
         })
         .catch((e) => {
           console.log(`Error get current schema: ${e}`);
@@ -38,8 +38,8 @@ export default class SchemaList extends BasicList {
       this.rimeCLI.getSchemaList().then((res) => {
         let listItems: ListItem[] = res.map((schema) => {
           return {
-            label: schema.name + ': ' + schema.schemaId,
-            filterText: schema.name + schema.schemaId,
+            label: schema.name + ': ' + schema.schema_id,
+            filterText: schema.name + schema.schema_id,
             data: schema,
           };
         });

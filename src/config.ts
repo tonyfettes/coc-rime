@@ -1,10 +1,5 @@
 import { realpath, mkdir } from 'fs/promises';
-import { resolve } from 'path';
 import { workspace, WorkspaceConfiguration, ExtensionContext } from 'coc.nvim';
-import { exec } from 'child_process';
-import { promisify } from 'util';
-
-let execAsync = promisify(exec);
 
 async function get_dir(...dirs: string[]): Promise<string> {
   for (const dir of dirs) {
@@ -45,20 +40,6 @@ export class Config {
   }
   get shortcut() {
     return this.cfg.get<string>('shortcut');
-  }
-  get binaryPath() {
-    return new Promise<string>(async (res, reject) => {
-      let binaryPath = await get_dir(resolve(this.context.extensionPath, 'build', 'Release', 'rime.node'));
-      if (binaryPath === '') {
-        await execAsync(`npm rebuild`, { cwd: this.context.extensionPath });
-        binaryPath = await get_dir(resolve(this.context.extensionPath, 'build', 'Release', 'rime.node'));
-      }
-      try {
-        res(binaryPath);
-      } catch (e) {
-        reject(e);
-      }
-    });
   }
   get traits() {
     return new Promise<Traits>(async (res, reject) => {

@@ -618,6 +618,7 @@ __metadata:
     eslint-plugin-prettier: "npm:^3.1.4"
     mkdirp: "npm:^0.5.1"
     node-gyp: "npm:^10.1.0"
+    node-gyp-build: "npm:^4.8.0"
     npm-run-all: "npm:^4.1.5"
     prebuildify: "npm:^6.0.0"
     prettier: "npm:^2.2.0"
@@ -2270,11 +2271,22 @@ __metadata:
   linkType: hard
 
 "node-abi@npm:^3.3.0":
-  version: 3.57.0
-  resolution: "node-abi@npm:3.57.0"
+  version: 3.58.0
+  resolution: "node-abi@npm:3.58.0"
   dependencies:
     semver: "npm:^7.3.5"
-  checksum: 10c0/8d78542e39a3c49ac476d12c70ef0366f26a40a215af44498656e75fc85e5646309765a3277e1cbb2ec40283a9e86f7aefcdd699e30576c582f6bb931e6c802b
+  checksum: 10c0/1e46c48598852eef976fcf772ed83dd90dec06c2251f00bee341a235c494b3116d408810aae3c2fdbb8c228953310034fc0c66c0abdfe42b5d5df276e79f0ee2
+  languageName: node
+  linkType: hard
+
+"node-gyp-build@npm:^4.8.0":
+  version: 4.8.0
+  resolution: "node-gyp-build@npm:4.8.0"
+  bin:
+    node-gyp-build: bin.js
+    node-gyp-build-optional: optional.js
+    node-gyp-build-test: build-test.js
+  checksum: 10c0/85324be16f81f0235cbbc42e3eceaeb1b5ab94c8d8f5236755e1435b4908338c65a4e75f66ee343cbcb44ddf9b52a428755bec16dcd983295be4458d95c8e1ad
   languageName: node
   linkType: hard
 
