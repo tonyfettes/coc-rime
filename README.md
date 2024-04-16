@@ -57,23 +57,10 @@ You could use `CocList` to switch between schema.
 2. `rime.priority`: The priority of this completion source.
 3. `rime.schemaId`: The `schemaId` selected when `coc-rime` start.
    You could get it from `rime_schema` list.
-4. `rime.binaryPath`: The path where binary of `coc-rime` is placed. By
-   default, it will search:
-   - `~/.config/coc/extensions/node_modules/coc-rime/build/Release/rime_cli`:
-     For `npm rebuild`
-   - `~/.config/coc/extensions/node_modules/coc-rime/result/bin/rime_cli`: For
-     `nix build`
-5. `rime.sharedDataDir`: by default, it will search:
-   - `${PREFIX:-/usr}/share/rime-data`: for GNU/Linux
-   - `/sdcard/rime-data`: for Android
-   - `/run/current-system/sw/share/rime-data`: for NixOS
-6. `rime.userDataDir`: by default, it will search:
-   - `~/.config/ibus/rime`: for ibus
-   - `/sdcard/rime`: for trime
-   - `~/.config/fcitx/rime`: for fcitx
-   - `~/.local/share/fcitx5/rime`: for fcitx5
-7. `rime.logDir`: by default, it will be
-   `~/.config/coc/extensions/coc-rime-data`
+4. `rime.priority`: Priority of Rime completion source
+5. `rime.traits.shared_data_dir`: Path(s) where rime data stores
+6. `rime.traits.user_data_dir`: Path(s) where rime configuration stores
+7. `rime.traits.*`: More rime traits
 
 ## License
 

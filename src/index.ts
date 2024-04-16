@@ -8,13 +8,13 @@ import { Config } from './config';
 export async function activate(context: ExtensionContext): Promise<void> {
   const userConfig = new Config(context);
   let binaryPath = await userConfig.binaryPath;
-  let args = await userConfig.args;
+  let traits = await userConfig.traits;
   if (binaryPath === '') {
     window.showInformationMessage(`'rime.binaryPath' cannot be found. Read README.md to know how to build it.`);
     return;
   }
 
-  const rimeCLI: RimeCLI = new RimeCLI(binaryPath, args);
+  const rimeCLI: RimeCLI = new RimeCLI(binaryPath, [traits.shared_data_dir, traits.user_data_dir, traits.log_dir]);
   rimeCLI.setCompletionStatus(userConfig.enabled);
   rimeCLI.getSchema().then((schemaId) => {
     if (schemaId !== userConfig.schemaId && userConfig.schemaId !== '') rimeCLI.setSchema(userConfig.schemaId);

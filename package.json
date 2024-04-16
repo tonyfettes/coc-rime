@@ -42,7 +42,6 @@
     "rimraf": "^5.0.5",
     "ts-loader": "^8.0.2",
     "typescript": "^4.1.2",
-    "untildify": "^5.0.0",
     "vscode-languageserver-protocol": "^3.14.1",
     "vscode-languageserver-textdocument": "^1.0.1",
     "vscode-languageserver-types": "^3.14.0"
@@ -74,21 +73,99 @@
           "default": 2,
           "description": "Priority of Rime completion source"
         },
-        "rime.binaryPath": {
-          "type": "string",
-          "description": "Path of binary executive file of rime-cli"
+        "rime.traits.shared_data_dir": {
+          "oneOf": [
+            {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ],
+          "default": [
+            "${process.env.PREFIX}/share/rime-data",
+            "/usr/share/rime-data",
+            "/run/current-system/sw/share/rime-data",
+            "/sdcard/rime-data"
+          ],
+          "description": "shared data directory of rime. `null` will not use shared data (just use user data)"
         },
-        "rime.sharedDataDir": {
-          "type": "string",
-          "description": "shared data directory of rime. By default, it will search some paths: `/usr/share/rime-data`, ..."
+        "rime.traits.user_data_dir": {
+          "oneOf": [
+            {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ],
+          "default": [
+            "${process.env.HOME}/.config/ibus/rime",
+            "${process.env.HOME}/.config/fcitx/rime",
+            "${process.env.HOME}/.local/share/fcitx5/rime",
+            "/sdcard/rime"
+          ],
+          "description": "user data directory of rime. `null` will not use user data (just use shared data)"
         },
-        "rime.userDataDir": {
-          "type": "string",
-          "description": "user data directory of rime. By default, it will search some paths: `~/.config/ibus/rime`, ..."
+        "rime.traits.log_dir": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": "",
+          "description": "log directory of rime. By default, it will be `~/.config/coc/extensions/coc-rime-data`. `null` will disable logging"
         },
-        "rime.logDir": {
-          "type": "string",
-          "description": "log directory of rime. By default, it will be `~/.config/coc/extensions/coc-rime-data`"
+        "rime.traits.distribution_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": "Rime"
+        },
+        "rime.traits.distribution_code_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": "coc-rime"
+        },
+        "rime.traits.distribution_version": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": "0.1.3"
+        },
+        "rime.traits.app_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": "rime.coc-rime",
+          "description": "Pass a C-string constant in the format \"rime.x\" where 'x' is the name of your application. Add prefix \"rime.\" to ensure old log files are automatically cleaned."
+        },
+        "rime.traits.min_log_level": {
+          "type": "integer",
+          "enum": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "default": 0,
+          "description": "Minimal level of logged messages. Value is passed to Glog library using FLAGS_minloglevel variable. 0 = INFO (default), 1 = WARNING, 2 = ERROR, 3 = FATAL"
         }
       }
     },
