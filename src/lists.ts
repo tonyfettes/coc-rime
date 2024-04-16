@@ -14,46 +14,37 @@ export default class SchemaList extends BasicList {
     super(nvim);
     this.rimeCLI = rimeCLI;
     this.addAction('open', (item: ListItem) => {
-      if (this.rimeCLI.getCompletionStatus()) {
-        this.rimeCLI
-          .setSchema(item.data.schemaId)
-          .then((_) => {})
-          .catch((e) => {
-            console.log(`Error setting the schema: ${e}`);
-            window.showMessage(`Set schema ${item.data.label} failed.`);
-          });
-        this.rimeCLI
-          .getSchema()
-          .then((schemaId) => {
-            window.showMessage(`Changed to schema ${schemaId}.`);
-          })
-          .catch((e) => {
-            console.log(`Error get current schema: ${e}`);
-            window.showMessage(`Get current schema failed.`);
-          });
-      } else {
-        console.log(`rime-cli disabled`);
-        window.showMessage(`rime-cli disabled`);
-      }
+      this.rimeCLI
+        .setSchema(item.data.schemaId)
+        .then((_) => {})
+        .catch((e) => {
+          console.log(`Error setting the schema: ${e}`);
+          window.showMessage(`Set schema ${item.data.label} failed.`);
+        });
+      this.rimeCLI
+        .getSchema()
+        .then((schemaId) => {
+          window.showMessage(`Changed to schema ${schemaId}.`);
+        })
+        .catch((e) => {
+          console.log(`Error get current schema: ${e}`);
+          window.showMessage(`Get current schema failed.`);
+        });
     });
   }
 
   public async loadItems(_context: ListContext): Promise<ListItem[] | null> {
     return new Promise<ListItem[] | null>((resolve, _) => {
-      if (this.rimeCLI.getCompletionStatus()) {
-        this.rimeCLI.getSchemaList().then((res) => {
-          let listItems: ListItem[] = res.map((schema) => {
-            return {
-              label: schema.name + ': ' + schema.schemaId,
-              filterText: schema.name + schema.schemaId,
-              data: schema,
-            };
-          });
-          resolve(listItems);
+      this.rimeCLI.getSchemaList().then((res) => {
+        let listItems: ListItem[] = res.map((schema) => {
+          return {
+            label: schema.name + ': ' + schema.schemaId,
+            filterText: schema.name + schema.schemaId,
+            data: schema,
+          };
         });
-      } else {
-        resolve(null);
-      }
+        resolve(listItems);
+      });
     });
   }
 }
