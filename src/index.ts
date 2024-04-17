@@ -134,10 +134,10 @@ export async function activate(context: ExtensionContext): Promise<void> {
                       res.menu.candidates != null
                     ) {
                       resolve({
-                        items: res.menu.candidates.map((candidate) => {
+                        items: res.menu.candidates.map((candidate, order) => {
                           return {
                             label: candidate.text,
-                            sortText: String.fromCharCode(candidate.label),
+                            sortText: String.fromCharCode(order),
                             filterText: inputString,
                             textEdit: { range: inputRange, newText: candidate.text },
                           };
