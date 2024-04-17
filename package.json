@@ -135,17 +135,11 @@
           "default": "Rime"
         },
         "rime.traits.distribution_code_name": {
-          "type": [
-            "string",
-            "null"
-          ],
+          "type": "string",
           "default": "coc-rime"
         },
         "rime.traits.distribution_version": {
-          "type": [
-            "string",
-            "null"
-          ],
+          "type": "string",
           "default": "0.1.3"
         },
         "rime.traits.app_name": {

@@ -20,8 +20,8 @@ export interface Traits {
   user_data_dir?: string | null;
   log_dir?: string | null;
   distribution_name?: string | null;
-  distribution_code_name?: string | null;
-  distribution_version?: string | null;
+  distribution_code_name: string;
+  distribution_version: string;
   app_name?: string | null;
   min_log_level?: 0 | 1 | 2 | 3;
 }
@@ -81,8 +81,8 @@ export class Config {
         user_data_dir: user_data_dir,
         log_dir: log_dir,
         distribution_name: this.cfg.get<string | null>('traits.distribution_name'),
-        distribution_code_name: this.cfg.get<string | null>('traits.distribution_code_name'),
-        distribution_version: this.cfg.get<string | null>('traits.distribution_version'),
+        distribution_code_name: this.cfg.get<string>('traits.distribution_code_name'),
+        distribution_version: this.cfg.get<string>('traits.distribution_version'),
         app_name: this.cfg.get<string | null>('traits.app_name'),
         min_log_level: this.cfg.get<0 | 1 | 2 | 3>('traits.min_log_level'),
       };
