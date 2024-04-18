@@ -23,9 +23,9 @@
                         # gcc of Ubuntu needs it
                         # gcc of ArchLinux ignores it
                         "ldflags+": ["-Wl,--start-group"]
-                    }
+                    },
                 ]
-            ]
+            ],
         }
-    ]
+    ],
 }

@@ -73,6 +73,15 @@ repos:
       - id: markdownlint-cli2
         additional_dependencies:
           - markdown-it-texmath
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.3.5
+    hooks:
+      - id: ruff
+      - id: ruff-format
+  - repo: https://github.com/kumaraditya303/mirrors-pyright
+    rev: v1.1.357
+    hooks:
+      - id: pyright
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v4.0.0-alpha.8
     hooks:
