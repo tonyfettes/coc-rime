@@ -3,7 +3,7 @@ import { exec } from 'child_process';
 import { Traits } from './config';
 import { default as binding, RimeContext, RimeSchema } from './binding';
 
-export class RimeCLI {
+export class Rime {
   private isEnabled: boolean = true;
   private readonly traits: Traits;
   private sessionId: BigInt;

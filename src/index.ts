@@ -2,16 +2,16 @@ import { commands, ExtensionContext, listManager, CompletionContext, window, wor
 import { Position, CancellationToken, CompletionList, Range } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import SchemaList from './lists';
-import { RimeCLI } from './rime';
+import { Rime } from './rime';
 import { Config } from './config';
 
 export async function activate(context: ExtensionContext): Promise<void> {
   const userConfig = new Config(context);
 
-  const rimeCLI: RimeCLI = new RimeCLI(await userConfig.traits);
-  rimeCLI.setCompletionStatus(userConfig.enabled);
-  rimeCLI.getSchema().then((schemaId) => {
-    if (schemaId !== userConfig.schemaId && userConfig.schemaId !== '') rimeCLI.setSchema(userConfig.schemaId);
+  const rime: Rime = new Rime(await userConfig.traits);
+  rime.setCompletionStatus(userConfig.enabled);
+  rime.getSchema().then((schemaId) => {
+    if (schemaId !== userConfig.schemaId && userConfig.schemaId !== '') rime.setSchema(userConfig.schemaId);
   });
   const statusBarItem = window.createStatusBarItem(0, { progress: false });
   statusBarItem.text = userConfig.shortcut;
@@ -22,18 +22,18 @@ export async function activate(context: ExtensionContext): Promise<void> {
   context.subscriptions.push(
     // Commands
     commands.registerCommand('rime.enable', async () => {
-      rimeCLI.setCompletionStatus(true);
+      rime.setCompletionStatus(true);
       statusBarItem.show();
     }),
 
     commands.registerCommand('rime.disable', async () => {
-      rimeCLI.setCompletionStatus(false);
+      rime.setCompletionStatus(false);
       statusBarItem.hide();
     }),
 
     commands.registerCommand('rime.toggle', async () => {
-      rimeCLI.toggleCompletionStatus();
-      if (rimeCLI.getCompletionStatus()) {
+      rime.toggleCompletionStatus();
+      if (rime.getCompletionStatus()) {
         statusBarItem.show();
       } else {
         statusBarItem.hide();
@@ -82,7 +82,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
               ['-', ['——']],
             ]);
             let offset = document.offsetAt(position);
-            if (offset != 0 && rimeCLI.getCompletionStatus()) {
+            if (offset != 0 && rime.getCompletionStatus()) {
               let inputString = '';
               let inputRange: Range = { start: position, end: position };
               const getPrevSingleChar = (offset: number): string => {
@@ -117,7 +117,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
                   inputString = '';
                 }
                 inputRange.start = document.positionAt(offset);
-                rimeCLI
+                rime
                   .getContext(inputString)
                   .then((res) => {
                     if (
@@ -161,5 +161,5 @@ export async function activate(context: ExtensionContext): Promise<void> {
   );
 
   // Schema List
-  listManager.registerList(new SchemaList(workspace.nvim, rimeCLI));
+  listManager.registerList(new SchemaList(workspace.nvim, rime));
 }

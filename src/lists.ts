@@ -1,5 +1,5 @@
 import { BasicList, ListAction, ListContext, ListItem, Neovim, window } from 'coc.nvim';
-import { RimeSchema, RimeCLI } from './rime';
+import { RimeSchema, Rime } from './rime';
 
 export default class SchemaList extends BasicList {
   public readonly name = 'rime_schema';
@@ -8,20 +8,20 @@ export default class SchemaList extends BasicList {
   public schemaList: RimeSchema[] = [];
   public actions: ListAction[] = [];
 
-  private rimeCLI: RimeCLI;
+  private rime: Rime;
 
-  constructor(nvim: Neovim, rimeCLI: RimeCLI) {
+  constructor(nvim: Neovim, rime: Rime) {
     super(nvim);
-    this.rimeCLI = rimeCLI;
+    this.rime = rime;
     this.addAction('open', (item: ListItem) => {
-      this.rimeCLI
+      this.rime
         .setSchema(item.data.schema_id)
         .then((_) => {})
         .catch((e) => {
           console.log(`Error setting the schema: ${e}`);
           window.showMessage(`Set schema ${item.data.label} failed.`);
         });
-      this.rimeCLI
+      this.rime
         .getSchema()
         .then((schema_id) => {
           window.showMessage(`Changed to schema ${schema_id}.`);
@@ -35,7 +35,7 @@ export default class SchemaList extends BasicList {
 
   public async loadItems(_context: ListContext): Promise<ListItem[] | null> {
     return new Promise<ListItem[] | null>((resolve, _) => {
-      this.rimeCLI.getSchemaList().then((res) => {
+      this.rime.getSchemaList().then((res) => {
         let listItems: ListItem[] = res.map((schema) => {
           return {
             label: schema.name + ': ' + schema.schema_id,
