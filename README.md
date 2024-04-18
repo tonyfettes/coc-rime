@@ -7,21 +7,20 @@ Rime input method integration of coc.nvim
 ## Dependencies
 
 - [rime](https://rime.im/)
-- [json-c](https://github.com/json-c/json-c)
 - [pkg-config](http://pkg-config.freedesktop.org/)
 
 ```sh
 # Ubuntu
-sudo apt-get -y install pkg-config librime-dev libjson-c-dev librime1 libjson-c5
+sudo apt-get -y install pkg-config librime-dev librime1
 # ArchLinux
-sudo pacman -S pkg-config librime json-c
+sudo pacman -S pkg-config librime
 # Android Termux
-apt-get -y install pkg-config librime json-c
+apt-get -y install pkg-config librime
 # Nix
-nix-env -iA nixos.pkg-config nixos.librime nixos.json-c
+nix-env -iA nixos.pkg-config nixos.librime
 # Brew
 brew tap tonyfettes/homebrew-rime
-brew install pkg-config rime json-c
+brew install pkg-config rime
 ```
 
 ## Install
