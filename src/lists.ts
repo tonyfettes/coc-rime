@@ -1,4 +1,4 @@
-import { BasicList, ListAction, ListContext, ListItem, Neovim, window } from 'coc.nvim';
+import { BasicList, ListAction, ListContext, ListItem, Neovim, window, StatusBarItem } from 'coc.nvim';
 import { RimeSchema, Rime } from './rime';
 
 export default class SchemaList extends BasicList {
@@ -10,10 +10,11 @@ export default class SchemaList extends BasicList {
 
   private rime: Rime;
 
-  constructor(nvim: Neovim, rime: Rime) {
+  constructor(nvim: Neovim, rime: Rime, statusBarItem: StatusBarItem, shortcut: string) {
     super(nvim);
     this.rime = rime;
     this.addAction('open', (item: ListItem) => {
+      let schemaId: string;
       this.rime
         .setSchema(item.data.schema_id)
         .then((_) => {})
@@ -24,12 +25,23 @@ export default class SchemaList extends BasicList {
       this.rime
         .getSchema()
         .then((schema_id) => {
+          schemaId = schema_id;
           window.showMessage(`Changed to schema ${schema_id}.`);
         })
         .catch((e) => {
           console.log(`Error get current schema: ${e}`);
           window.showMessage(`Get current schema failed.`);
         });
+      this.rime.getSchemaList().then((schema_list) => {
+        if (schemaId !== undefined) {
+          statusBarItem.text =
+            shortcut +
+            ' ' +
+            schema_list.filter((schema) => {
+              return schema.schema_id === schemaId;
+            })[0].name;
+        }
+      });
     });
   }
 

@@ -12,11 +12,21 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
   rime = new Rime(await userConfig.traits);
   rime.setCompletionStatus(userConfig.enabled);
-  rime.getSchema().then((schemaId) => {
-    if (schemaId !== userConfig.schemaId && userConfig.schemaId !== '') rime.setSchema(userConfig.schemaId);
-  });
   const statusBarItem = window.createStatusBarItem(0, { progress: false });
-  statusBarItem.text = userConfig.shortcut;
+  rime.getSchema().then((schemaId) => {
+    if (schemaId !== userConfig.schemaId && userConfig.schemaId !== '') {
+      rime.setSchema(userConfig.schemaId);
+      schemaId = userConfig.schemaId;
+    }
+    rime.getSchemaList().then((schemaList) => {
+      statusBarItem.text =
+        userConfig.shortcut +
+        ' ' +
+        schemaList.filter((schema) => {
+          return schema.schema_id === schemaId;
+        })[0].name;
+    });
+  });
   if (userConfig.enabled) {
     statusBarItem.show();
   }
@@ -163,7 +173,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
   );
 
   // Schema List
-  listManager.registerList(new SchemaList(workspace.nvim, rime));
+  listManager.registerList(new SchemaList(workspace.nvim, rime, statusBarItem, userConfig.shortcut));
 }
 
 export async function deactivate(): Promise<void> {
