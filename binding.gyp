@@ -8,10 +8,6 @@
             "sources": [
                 "binding.c",
             ],
-            "defines": [
-                "PROJECT_NAME=\"<!(node -p \"require('./package.json').name\")\"",
-                "PROJECT_VERSION=\"<!(node -p \"require('./package.json').version\")\"",
-             ],
             "cflags": [
                 "<!@(pkg-config --cflags rime)",
             ],
