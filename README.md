@@ -1,6 +1,11 @@
 # coc-rime
 
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/tonyfettes/coc-rime/main.svg)](https://results.pre-commit.ci/latest/github/tonyfettes/coc-rime/main)
+[![github/workflow](https://github.com/tonyfettes/coc-rime/actions/workflows/main.yml/badge.svg)](https://github.com/tonyfettes/coc-rime/actions)
+
 Rime input method integration of coc.nvim
+
+> This extension is created by [create-coc-extension](https://github.com/fannheyward/create-coc-extension)
 
 ![screenshot](https://user-images.githubusercontent.com/29998228/111900984-6c20ef00-8a70-11eb-9920-4d9da5102a48.gif)
 
@@ -88,7 +93,3 @@ MIT
 ### Rime frontends
 
 See [here](https://github.com/osfans/trime/wiki/Rime%E5%89%8D%E7%AB%AF%E6%B1%87%E6%80%BB).
-
----
-
-> This extension is created by [create-coc-extension](https://github.com/fannheyward/create-coc-extension)

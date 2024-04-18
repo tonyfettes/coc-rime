@@ -1,11 +1,11 @@
 ---
-"on":
+'on':
   push:
     paths-ignore:
-      - "**.md"
+      - '**.md'
   pull_request:
     paths-ignore:
-      - "**.md"
+      - '**.md'
   workflow_dispatch:
 
 # https://github.com/softprops/action-gh-release/issues/236
@@ -38,7 +38,7 @@ jobs:
       - uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: "*.tgz"
+          files: '*.tgz'
       - name: Publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NODE_AUTH_TOKEN}}

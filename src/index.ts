@@ -50,7 +50,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
           document: TextDocument,
           position: Position,
           _token: CancellationToken,
-          _context: CompletionContext
+          _context: CompletionContext,
         ): Promise<CompletionList> {
           return new Promise<CompletionList>((resolve, reject) => {
             const emptyResponse: CompletionList = {
@@ -156,8 +156,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
       },
       [],
       userConfig.priority,
-      []
-    )
+      [],
+    ),
   );
 
   // Schema List
