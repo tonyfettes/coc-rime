@@ -21,11 +21,11 @@ export class Rime {
     this.sessionId = binding.createSession();
   }
 
-  private destroy() {
+  destroy() {
     binding.destroySession(this.sessionId);
   }
 
-  public async setCompletionStatus(status: boolean): Promise<boolean> {
+  async setCompletionStatus(status: boolean): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       try {
         this.isEnabled = status;
@@ -36,7 +36,7 @@ export class Rime {
     });
   }
 
-  public async toggleCompletionStatus(): Promise<boolean> {
+  async toggleCompletionStatus(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       try {
         this.isEnabled = !this.isEnabled;
@@ -47,11 +47,11 @@ export class Rime {
     });
   }
 
-  public getCompletionStatus(): boolean {
+  getCompletionStatus(): boolean {
     return this.isEnabled;
   }
 
-  public async getContext(input: string): Promise<RimeContext> {
+  async getContext(input: string): Promise<RimeContext> {
     return new Promise<RimeContext>((resolve, reject) => {
       try {
         for (const singleChar of input) {
@@ -79,7 +79,7 @@ export class Rime {
     });
   }
 
-  public async getSchemaList(): Promise<RimeSchema[]> {
+  async getSchemaList(): Promise<RimeSchema[]> {
     return new Promise<RimeSchema[]>((resolve, reject) => {
       try {
         if (this.schemaList === undefined) this.schemaList = binding.getSchemaList();
@@ -90,7 +90,7 @@ export class Rime {
     });
   }
 
-  public async getSchema(): Promise<string> {
+  async getSchema(): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       try {
         if (this.schemaId === undefined) this.schemaId = binding.getCurrentSchema(this.sessionId);
@@ -101,7 +101,7 @@ export class Rime {
     });
   }
 
-  public async setSchema(schemaId: string): Promise<void> {
+  async setSchema(schemaId: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       try {
         resolve(binding.selectSchema(this.sessionId, schemaId));

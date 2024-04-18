@@ -5,10 +5,12 @@ import SchemaList from './lists';
 import { Rime } from './rime';
 import { Config } from './config';
 
+let rime: Rime;
+
 export async function activate(context: ExtensionContext): Promise<void> {
   const userConfig = new Config(context);
 
-  const rime: Rime = new Rime(await userConfig.traits);
+  rime = new Rime(await userConfig.traits);
   rime.setCompletionStatus(userConfig.enabled);
   rime.getSchema().then((schemaId) => {
     if (schemaId !== userConfig.schemaId && userConfig.schemaId !== '') rime.setSchema(userConfig.schemaId);
@@ -162,4 +164,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
   // Schema List
   listManager.registerList(new SchemaList(workspace.nvim, rime));
+}
+
+export async function deactivate(): Promise<void> {
+  rime.destroy();
 }
