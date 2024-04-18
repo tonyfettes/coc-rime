@@ -82,7 +82,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
               ['-', ['——']],
             ]);
             let offset = document.offsetAt(position);
-            if (offset != 0 && rime.getCompletionStatus()) {
+            if (offset !== 0 && rime.getCompletionStatus()) {
               let inputString = '';
               let inputRange: Range = { start: position, end: position };
               const getPrevSingleChar = (offset: number): string => {
@@ -107,7 +107,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
                 }
                 resolve(punctResponse);
               } else {
-                while (/[!-@\[-~]/.test(singleChar) && offset != 0) {
+                while (/[!-@\[-~]/.test(singleChar) && offset !== 0) {
                   inputString = singleChar + inputString;
                   offset -= 1;
                   singleChar = getPrevSingleChar(offset);
@@ -121,11 +121,11 @@ export async function activate(context: ExtensionContext): Promise<void> {
                   .getContext(inputString)
                   .then((res) => {
                     if (
-                      res != null &&
+                      res !== null &&
                       'menu' in res &&
-                      res.menu != null &&
+                      res.menu !== null &&
                       'candidates' in res.menu &&
-                      res.menu.candidates != null
+                      res.menu.candidates !== null
                     ) {
                       resolve({
                         items: res.menu.candidates.map((candidate, order) => {
