@@ -1,5 +1,3 @@
-import * as path from 'path';
-import { exec } from 'child_process';
 import { Traits } from './config';
 import { default as binding, RimeContext, RimeSchema } from './binding';
 
@@ -12,12 +10,7 @@ export class Rime {
 
   constructor(traits: Traits) {
     this.traits = traits;
-    try {
-      binding.init(traits);
-    } catch (e) {
-      exec('npm rebuild', { cwd: path.resolve(__dirname, '..') });
-      binding.init(traits);
-    }
+    binding.init(traits);
     this.sessionId = binding.createSession();
   }
 

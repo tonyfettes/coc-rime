@@ -1,7 +1,16 @@
 import { resolve } from 'path';
 import { default as build } from 'node-gyp-build';
+import { execSync } from 'child_process';
 
-export default build(resolve(__dirname, '..'));
+let binding;
+const root = resolve(__dirname, '..');
+try {
+  binding = build(root);
+} catch (e) {
+  execSync('npm rebuild', { cwd: resolve(__dirname, '..') });
+  binding = build(root);
+}
+export default binding;
 
 export interface RimeComposition {
   length: number;
