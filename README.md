@@ -1,6 +1,6 @@
 # coc-rime
 
-[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/tonyfettes/coc-rime/main.svg)](https://results.pre-commit.ci/latest/github/tonyfettes/coc-rime/main)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/tonyfettes/coc-rime/master.svg)](https://results.pre-commit.ci/latest/github/tonyfettes/coc-rime/master)
 [![github/workflow](https://github.com/tonyfettes/coc-rime/actions/workflows/main.yml/badge.svg)](https://github.com/tonyfettes/coc-rime/actions)
 
 Rime input method integration of coc.nvim
