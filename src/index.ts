@@ -134,6 +134,15 @@ export async function activate(context: ExtensionContext): Promise<void> {
                   .then((res) => {
                     if (
                       res !== null &&
+                      'composition' in res &&
+                      res.composition !== null &&
+                      'preedit' in res.composition &&
+                      res.composition.preedit !== null
+                    ) {
+                      window.showInformationMessage(res.composition.preedit);
+                    }
+                    if (
+                      res !== null &&
                       'menu' in res &&
                       res.menu !== null &&
                       'candidates' in res.menu &&
@@ -145,6 +154,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
                             label: candidate.text,
                             sortText: String.fromCharCode(order),
                             filterText: inputString,
+                            documentation: candidate?.comment ?? '',
                             textEdit: { range: inputRange, newText: candidate.text },
                           };
                         }),
