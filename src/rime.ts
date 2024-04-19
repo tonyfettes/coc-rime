@@ -59,18 +59,18 @@ export class Rime {
         }
         let context = binding.getContext(this.sessionId);
         let result = context;
-        if (input === '') resolve(result);
-        while (!context.menu.is_last_page) {
-          binding.processKey(this.sessionId, '='.charCodeAt(0), 0);
-          context = binding.getContext(this.sessionId);
-          result.menu.num_candidates += context.menu.num_candidates;
-          if (result.menu?.select_keys && context.menu?.select_keys) {
-            result.menu.select_keys.push(...context.menu.select_keys);
+        if (input !== '')
+          while (!context.menu.is_last_page) {
+            binding.processKey(this.sessionId, '='.charCodeAt(0), 0);
+            context = binding.getContext(this.sessionId);
+            result.menu.num_candidates += context.menu.num_candidates;
+            if (result.menu?.select_keys && context.menu?.select_keys) {
+              result.menu.select_keys.push(...context.menu.select_keys);
+            }
+            if (result.menu?.candidates && context.menu?.candidates) {
+              result.menu.candidates.push(...context.menu.candidates);
+            }
           }
-          if (result.menu?.candidates && context.menu?.candidates) {
-            result.menu.candidates.push(...context.menu.candidates);
-          }
-        }
         resolve(result);
       } catch (e) {
         reject(e);
