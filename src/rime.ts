@@ -59,6 +59,7 @@ export class Rime {
         }
         let context = binding.getContext(this.sessionId);
         let result = context;
+        if (input === '') resolve(result);
         while (!context.menu.is_last_page) {
           binding.processKey(this.sessionId, '='.charCodeAt(0), 0);
           context = binding.getContext(this.sessionId);
