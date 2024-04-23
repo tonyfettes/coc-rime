@@ -3,6 +3,7 @@ number = true
 
 [tool.codespell]
 ignore-words-list = "rime"
+skip = "yarn.lock"
 
 [tool.ruff]
 line-length = 79
