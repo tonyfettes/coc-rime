@@ -22,7 +22,7 @@ sudo pacman -S pkg-config librime
 # Android Termux
 apt-get -y install pkg-config librime
 # Nix
-nix-env -iA nixos.pkg-config nixos.librime
+# without any extra operation
 # Brew
 brew tap tonyfettes/homebrew-rime
 brew install pkg-config rime
