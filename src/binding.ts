@@ -1,3 +1,4 @@
+import { existsSync } from 'fs';
 import { resolve } from 'path';
 import { default as build } from 'node-gyp-build';
 import { execSync } from 'child_process';
@@ -7,7 +8,11 @@ const root = resolve(__dirname, '..');
 try {
   binding = build(root);
 } catch (e) {
-  execSync('npm rebuild', { cwd: resolve(__dirname, '..') });
+  let cmd = 'npm rebuild';
+  if (existsSync('/run/current-system/nixos-version')) {
+    cmd = `nix-shell --pure --run "${cmd}"`;
+  }
+  execSync(cmd, { cwd: resolve(__dirname, '..') });
   binding = build(root);
 }
 export default binding;

@@ -4,3 +4,4 @@
 !/prebuilds/
 !/binding.gyp
 !/binding.c
+!/shell.nix
