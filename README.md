@@ -74,9 +74,19 @@ MIT
 
 ### IM for vim
 
-- [fcitx.vim](https://github.com/lilydjwg/fcitx.vim): for [fcitx5](https://github.com/fcitx/fcitx5)
-- [vim-xkbswitch](https://github.com/lyokha/vim-xkbswitch): for [ibus](https://github.com/ibus/ibus)
+#### Pure vim
+
 - [VimIM](https://github.com/vim-scripts/VimIM): Stop maintenance
+
+#### [ibus](https://github.com/ibus/ibus)
+
+- [vim-xkbswitch](https://github.com/lyokha/vim-xkbswitch)
+
+#### [fcitx5](https://github.com/fcitx/fcitx5)
+
+- [fcitx.vim](https://github.com/lilydjwg/fcitx.vim)
+- [fcitx5.nvim](https://github.com/tonyfettes/fcitx5.nvim)
+- [fcitx5-ui.nvim](https://github.com/black-desk/fcitx5-ui.nvim)
 
 本项目希望为不可能使用输入法的环境中提供必要的中文支持：
 
