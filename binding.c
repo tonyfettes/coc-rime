@@ -100,7 +100,6 @@ static napi_value init(napi_env env, napi_callback_info info) {
   }
   RimeSetup(&rime_traits);
   RimeInitialize(&rime_traits);
-  RimeStartMaintenance(false);
   return NULL;
 }
 
