@@ -21,6 +21,15 @@ export interface Traits {
   min_log_level?: 0 | 1 | 2 | 3;
 }
 
+export interface UI {
+  indices: string[];
+  left: string;
+  right: string;
+  left_sep: string;
+  right_sep: string;
+  cursor: string;
+}
+
 export class Config {
   private cfg: WorkspaceConfiguration;
   private context: ExtensionContext;
@@ -73,5 +82,15 @@ export class Config {
         reject(e);
       }
     });
+  }
+  get ui() {
+    return {
+      indices: this.cfg.get<string[]>('ui.indices'),
+      left: this.cfg.get<string>('ui.left'),
+      right: this.cfg.get<string>('ui.right'),
+      left_sep: this.cfg.get<string>('ui.left_sep'),
+      right_sep: this.cfg.get<string>('ui.right_sep'),
+      cursor: this.cfg.get<string>('ui.cursor'),
+    };
   }
 }

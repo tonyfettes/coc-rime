@@ -162,6 +162,50 @@
           ],
           "default": 3,
           "description": "Minimal level of logged messages. Value is passed to Glog library using FLAGS_minloglevel variable. 0 = INFO (default), 1 = WARNING, 2 = ERROR, 3 = FATAL"
+        },
+        "rime.ui.indices": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "①",
+            "②",
+            "③",
+            "④",
+            "⑤",
+            "⑥",
+            "⑦",
+            "⑧",
+            "⑨",
+            "⓪"
+          ],
+          "description": "indices for IME"
+        },
+        "rime.ui.left": {
+          "type": "string",
+          "default": "<|",
+          "description": "left symbol for IME"
+        },
+        "rime.ui.right": {
+          "type": "string",
+          "default": "|>",
+          "description": "right symbol for IME"
+        },
+        "rime.ui.left_sep": {
+          "type": "string",
+          "default": "[",
+          "description": "left separator for IME"
+        },
+        "rime.ui.right_sep": {
+          "type": "string",
+          "default": "]",
+          "description": "right separator for IME"
+        },
+        "rime.ui.cursor": {
+          "type": "string",
+          "default": "|",
+          "description": "cursor symbol for IME"
         }
       }
     },
