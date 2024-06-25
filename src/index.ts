@@ -10,7 +10,7 @@ let rime: Rime;
 export async function activate(context: ExtensionContext): Promise<void> {
   const userConfig = new Config(context);
 
-  rime = new Rime(await userConfig.traits);
+  rime = new Rime(await userConfig.traits, userConfig.ui);
   rime.setCompletionStatus(userConfig.enabled);
   const statusBarItem = window.createStatusBarItem(0, { progress: false });
   rime.getSchema().then((schemaId) => {
