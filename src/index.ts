@@ -33,17 +33,17 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
   context.subscriptions.push(
     // Commands
-    commands.registerCommand('rime.enable', async () => {
+    commands.registerCommand('rime.source.enable', async () => {
       rime.setCompletionStatus(true);
       statusBarItem.show();
     }),
 
-    commands.registerCommand('rime.disable', async () => {
+    commands.registerCommand('rime.source.disable', async () => {
       rime.setCompletionStatus(false);
       statusBarItem.hide();
     }),
 
-    commands.registerCommand('rime.toggle', async () => {
+    commands.registerCommand('rime.source.toggle', async () => {
       rime.toggleCompletionStatus();
       if (rime.getCompletionStatus()) {
         statusBarItem.show();

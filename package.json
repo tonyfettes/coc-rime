@@ -167,15 +167,15 @@
     },
     "commands": [
       {
-        "command": "rime.enable",
+        "command": "rime.source.enable",
         "title": "Enable the Rime source"
       },
       {
-        "command": "rime.disable",
+        "command": "rime.source.disable",
         "title": "Disable the Rime source"
       },
       {
-        "command": "rime.toggle",
+        "command": "rime.source.toggle",
         "title": "Toggle the Rime source"
       }
     ]
