@@ -68,7 +68,7 @@ export class Rime {
       } catch (e) {
         reject(e);
       } finally {
-        binding.processKey(this.sessionId, '；'.charCodeAt(0), 0);
+        binding.clearComposition(this.sessionId);
       }
     });
   }
