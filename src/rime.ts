@@ -44,7 +44,7 @@ export class Rime {
     return this.isEnabled;
   }
 
-  async getContext(input: string): Promise<RimeContext> {
+  async getContextWithAllCandidates(input: string): Promise<RimeContext> {
     return new Promise<RimeContext>((resolve, reject) => {
       try {
         for (const singleChar of input) {

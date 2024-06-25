@@ -130,7 +130,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
                 }
                 inputRange.start = document.positionAt(offset);
                 rime
-                  .getContext(inputString)
+                  .getContextWithAllCandidates(inputString)
                   .then((res) => {
                     if (
                       res !== null &&
