@@ -206,6 +206,269 @@
           "type": "string",
           "default": "|",
           "description": "cursor symbol for IME"
+        },
+        "rime.keymaps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "modifiers": {
+                "type": "array",
+                "item": {
+                  "type": "string",
+                  "enum": [
+                    "Shift",
+                    "Lock",
+                    "Control",
+                    "Alt",
+                    "Mod2",
+                    "Mod3",
+                    "Mod4",
+                    "Mod5",
+                    "Button1",
+                    "Button2",
+                    "Button3",
+                    "Button4",
+                    "Button5",
+                    "Super",
+                    "Hyper",
+                    "Meta",
+                    "Release"
+                  ]
+                }
+              }
+            }
+          },
+          "default": [
+            {
+              "modifiers": [
+                "Control"
+              ],
+              "key": "a",
+              "lhs": "<C-A>"
+            },
+            {
+              "modifiers": [
+                "Control"
+              ],
+              "key": "b",
+              "lhs": "<C-B>"
+            },
+            {
+              "modifiers": [
+                "Control"
+              ],
+              "key": "c",
+              "lhs": "<C-C>"
+            },
+            {
+              "modifiers": [
+                "Control"
+              ],
+              "key": "d",
+              "lhs": "<C-D>"
+            },
+            {
+              "modifiers": [
+                "Control"
+              ],
+              "key": "e",
+              "lhs": "<C-E>"
+            },
+            {
+              "modifiers": [
+                "Control"
+              ],
+              "key": "f",
+              "lhs": "<C-F>"
+            },
+            {
+              "modifiers": [
+                "Control"
+              ],
+              "key": "g",
+              "lhs": "<C-G>"
+            },
+            {
+              "modifiers": [
+                "Control"
+              ],
+              "key": "h",
+              "lhs": "<C-H>"
+            },
+            {
+              "modifiers": [
+                "Control"
+              ],
+              "key": "i",
+              "lhs": "<C-I>"
+            },
+            {
+              "modifiers": [
+                "Control"
+              ],
+              "key": "j",
+              "lhs": "<C-J>"
+            },
+            {
+              "modifiers": [
+                "Control"
+              ],
+              "key": "k",
+              "lhs": "<C-K>"
+            },
+            {
+              "modifiers": [
+                "Control"
+              ],
+              "key": "l",
+              "lhs": "<C-L>"
+            },
+            {
+              "modifiers": [
+                "Control"
+              ],
+              "key": "m",
+              "lhs": "<C-M>"
+            },
+            {
+              "modifiers": [
+                "Control"
+              ],
+              "key": "n",
+              "lhs": "<C-N>"
+            },
+            {
+              "modifiers": [
+                "Control"
+              ],
+              "key": "p",
+              "lhs": "<C-P>"
+            },
+            {
+              "modifiers": [
+                "Control"
+              ],
+              "key": "q",
+              "lhs": "<C-Q>"
+            },
+            {
+              "modifiers": [
+                "Control"
+              ],
+              "key": "s",
+              "lhs": "<C-S>"
+            },
+            {
+              "modifiers": [
+                "Control"
+              ],
+              "key": "t",
+              "lhs": "<C-T>"
+            },
+            {
+              "modifiers": [
+                "Control"
+              ],
+              "key": "u",
+              "lhs": "<C-U>"
+            },
+            {
+              "modifiers": [
+                "Control"
+              ],
+              "key": "v",
+              "lhs": "<C-V>"
+            },
+            {
+              "modifiers": [
+                "Control"
+              ],
+              "key": "w",
+              "lhs": "<C-W>"
+            },
+            {
+              "modifiers": [
+                "Control"
+              ],
+              "key": "x",
+              "lhs": "<C-X>"
+            },
+            {
+              "modifiers": [
+                "Control"
+              ],
+              "key": "y",
+              "lhs": "<C-Y>"
+            },
+            {
+              "modifiers": [
+                "Control"
+              ],
+              "key": "z",
+              "lhs": "<C-Z>"
+            },
+            {
+              "modifiers": [
+                "Control"
+              ],
+              "key": "2",
+              "lhs": "<C-Space>"
+            },
+            {
+              "modifiers": [],
+              "key": "Tab",
+              "lhs": "<TAB>"
+            },
+            {
+              "modifiers": [],
+              "key": "Left",
+              "lhs": "<Left>"
+            },
+            {
+              "modifiers": [],
+              "key": "Up",
+              "lhs": "<Up>"
+            },
+            {
+              "modifiers": [],
+              "key": "Right",
+              "lhs": "<Right>"
+            },
+            {
+              "modifiers": [],
+              "key": "Down",
+              "lhs": "<Down>"
+            },
+            {
+              "modifiers": [],
+              "key": "Page_Up",
+              "lhs": "<PageUp>"
+            },
+            {
+              "modifiers": [],
+              "key": "Page_Down",
+              "lhs": "<PageDown>"
+            },
+            {
+              "modifiers": [],
+              "key": "Home",
+              "lhs": "<Home>"
+            },
+            {
+              "modifiers": [],
+              "key": "End",
+              "lhs": "<End>"
+            },
+            {
+              "modifiers": [],
+              "key": "BackSpace",
+              "lhs": "<BS>"
+            }
+          ]
         }
       }
     },
@@ -221,6 +484,18 @@
       {
         "command": "rime.source.toggle",
         "title": "Toggle the Rime source"
+      },
+      {
+        "command": "rime.enable",
+        "title": "Enable the Rime IME"
+      },
+      {
+        "command": "rime.disable",
+        "title": "Disable the Rime IME"
+      },
+      {
+        "command": "rime.toggle",
+        "title": "Toggle the Rime IME"
       }
     ]
   },

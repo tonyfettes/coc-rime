@@ -20,6 +20,12 @@ export interface UI {
   cursor: string;
 }
 
+export interface Keymap {
+  modifiers: string[];
+  key: string;
+  lhs: string;
+}
+
 export class Config {
   private cfg: WorkspaceConfiguration;
   private context: ExtensionContext;
@@ -82,5 +88,8 @@ export class Config {
       right_sep: this.cfg.get<string>('ui.right_sep'),
       cursor: this.cfg.get<string>('ui.cursor'),
     };
+  }
+  get keymaps() {
+    return this.cfg.get<Keymap[]>('keymaps');
   }
 }
