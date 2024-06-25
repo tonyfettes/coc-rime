@@ -49,3 +49,7 @@ export interface RimeSchema {
   schema_id: string;
   name: string;
 }
+
+export interface RimeCommit {
+  text: string;
+}
