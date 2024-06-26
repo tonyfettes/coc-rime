@@ -1,5 +1,5 @@
 import { Traits, UI } from './config';
-import { default as binding, RimeContext, RimeSchema } from './binding';
+import { default as binding, RimeContext, RimeSchema, RimeCommit } from './binding';
 
 export class Rime {
   private isEnabled: boolean = true;
@@ -44,6 +44,53 @@ export class Rime {
 
   getCompletionStatus(): boolean {
     return this.isEnabled;
+  }
+
+  async processKey(input: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      try {
+        for (const singleChar of input) {
+          binding.processKey(this.sessionId, singleChar.charCodeAt(0), 0);
+        }
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
+
+  async getContext(): Promise<RimeContext> {
+    return new Promise<RimeContext>((resolve, reject) => {
+      try {
+        resolve(binding.getContext(this.sessionId));
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
+
+  async getCommit(): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      try {
+        let text = ''
+        if (binding.commitComposition(this.sessionId)) {
+          let commit: RimeCommit = binding.getCommit(this.sessionId)
+          text = commit.text
+        }
+        resolve(text);
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
+
+  async clearComposition(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      try {
+        binding.clearComposition(this.sessionId);
+      } catch (e) {
+        reject(e);
+      }
+    });
   }
 
   async getContextWithAllCandidates(input: string): Promise<RimeContext> {
