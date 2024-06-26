@@ -2,7 +2,7 @@
 number = true
 
 [tool.codespell]
-ignore-words-list = "rime"
+ignore-words-list = "rime, rightt"
 skip = "yarn.lock"
 
 [tool.ruff]
