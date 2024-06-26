@@ -52,6 +52,7 @@ export class Rime {
         for (const singleChar of input) {
           binding.processKey(this.sessionId, singleChar.charCodeAt(0), 0);
         }
+        resolve();
       } catch (e) {
         reject(e);
       }
@@ -87,6 +88,7 @@ export class Rime {
     return new Promise<void>((resolve, reject) => {
       try {
         binding.clearComposition(this.sessionId);
+        resolve();
       } catch (e) {
         reject(e);
       }
