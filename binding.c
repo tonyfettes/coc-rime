@@ -165,6 +165,7 @@ static napi_value getSchemaList(napi_env env, napi_callback_info info) {
     NODE_API_CALL(env, napi_set_named_property(env, element, "name", name));
     NODE_API_CALL(env, napi_set_element(env, result, i, element));
   }
+  RimeFreeSchemaList(&schema_list);
   return result;
 }
 
