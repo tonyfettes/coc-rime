@@ -1,5 +1,8 @@
+import { window } from 'coc.nvim';
 import { Traits, UI } from './config';
 import { default as binding, RimeContext, RimeSchema, RimeCommit } from './binding';
+import { default as keys } from './keys.json';
+import { default as modifiers } from './modifiers.json';
 
 export class Rime {
   private isEnabled: boolean = true;
@@ -46,12 +49,25 @@ export class Rime {
     return this.isEnabled;
   }
 
-  async processKey(input: string): Promise<void> {
+  async processKey(key: string, modifier: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       try {
-        for (const singleChar of input) {
-          binding.processKey(this.sessionId, singleChar.charCodeAt(0), 0);
+        let keycode = keys.indexOf(key);
+        if (keycode === -1) {
+          window.showErrorMessage(`${key} is not a legal key!`);
+          resolve();
         }
+        keycode = keycode + ' '.charCodeAt(0) - 2;
+        let mask = modifiers.indexOf(modifier);
+        if (modifier === '') {
+          mask = 0;
+        } else if (mask !== -1) {
+          mask = 2 ** mask;
+        } else {
+          window.showErrorMessage(`${modifier} is not a legal modifier!`);
+          resolve();
+        }
+        binding.processKey(this.sessionId, keycode, mask);
         resolve();
       } catch (e) {
         reject(e);
@@ -72,10 +88,10 @@ export class Rime {
   async getCommit(): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       try {
-        let text = ''
+        let text = '';
         if (binding.commitComposition(this.sessionId)) {
-          let commit: RimeCommit = binding.getCommit(this.sessionId)
-          text = commit.text
+          let commit: RimeCommit = binding.getCommit(this.sessionId);
+          text = commit.text;
         }
         resolve(text);
       } catch (e) {
@@ -99,13 +115,13 @@ export class Rime {
     return new Promise<RimeContext>((resolve, reject) => {
       try {
         for (const singleChar of input) {
-          binding.processKey(this.sessionId, singleChar.charCodeAt(0), 0);
+          this.processKey(singleChar, '');
         }
         let context = binding.getContext(this.sessionId);
         let result = context;
         if (input !== '')
           while (!context.menu.is_last_page) {
-            binding.processKey(this.sessionId, '='.charCodeAt(0), 0);
+            this.processKey('equal', '');
             context = binding.getContext(this.sessionId);
             result.menu.num_candidates += context.menu.num_candidates;
             if (result.menu?.select_keys && context.menu?.select_keys) {
