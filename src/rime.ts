@@ -2,6 +2,7 @@ import { window } from 'coc.nvim';
 import { Traits, UI } from './config';
 import { default as binding, RimeContext, RimeSchema, RimeCommit } from './binding';
 import { default as modifiers } from './modifiers.json';
+import { default as keys } from './keys.json';
 
 export class Rime {
   private isEnabled: boolean = true;
