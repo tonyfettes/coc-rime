@@ -1,7 +1,6 @@
 import { window } from 'coc.nvim';
 import { Traits, UI } from './config';
 import { default as binding, RimeContext, RimeSchema, RimeCommit } from './binding';
-import { default as keys } from './keys.json';
 import { default as modifiers } from './modifiers.json';
 
 export class Rime {
@@ -49,15 +48,9 @@ export class Rime {
     return this.isEnabled;
   }
 
-  async processKey(key: string, modifier: string): Promise<void> {
+  async processKey(keycode: number, modifier: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       try {
-        let keycode = keys.indexOf(key);
-        if (keycode === -1) {
-          window.showErrorMessage(`${key} is not a legal key!`);
-          resolve();
-        }
-        keycode = keycode + ' '.charCodeAt(0) - 2;
         let mask = modifiers.indexOf(modifier);
         if (modifier === '') {
           mask = 0;
@@ -115,13 +108,13 @@ export class Rime {
     return new Promise<RimeContext>((resolve, reject) => {
       try {
         for (const singleChar of input) {
-          this.processKey(singleChar, '');
+          this.processKey(singleChar.charCodeAt(0), '');
         }
         let context = binding.getContext(this.sessionId);
         let result = context;
         if (input !== '')
           while (!context.menu.is_last_page) {
-            this.processKey('equal', '');
+            this.processKey('='.charCodeAt(0), '');
             context = binding.getContext(this.sessionId);
             result.menu.num_candidates += context.menu.num_candidates;
             if (result.menu?.select_keys && context.menu?.select_keys) {
