@@ -49,12 +49,9 @@ export class Rime {
     return this.isEnabled;
   }
 
-  async processKey(key: string, modifiers_: string | string[]): Promise<void> {
+  async processKey(key: string, modifiers_: string[]): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       try {
-        if (typeof modifiers_ === 'string') {
-          modifiers_ = [modifiers_];
-        }
         let sum = 0;
         for (const modifier of modifiers_) {
           let mask = modifiers.indexOf(modifier);
