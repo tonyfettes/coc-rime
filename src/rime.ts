@@ -49,19 +49,19 @@ export class Rime {
     return this.isEnabled;
   }
 
-  async processKey(key: string, modifiers: string | string[]): Promise<void> {
+  async processKey(key: string, modifiers_: string | string[]): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       try {
-        if (typeof modifiers === 'string') {
-          modifiers = [modifiers];
+        if (typeof modifiers_ === 'string') {
+          modifiers_ = [modifiers_];
         }
         let sum = 0;
-        for (const modifier of modifiers) {
+        for (const modifier of modifiers_) {
           let mask = modifiers.indexOf(modifier);
           if (mask !== -1) {
             sum += 2 ** mask;
           } else {
-            window.showErrorMessage(`${modifiers} is not a legal modifier!`);
+            window.showErrorMessage(`${modifiers_} is not a legal modifier!`);
             resolve();
           }
         }
