@@ -58,7 +58,7 @@ export class Rime {
           if (mask !== -1) {
             sum += 2 ** mask;
           } else {
-            window.showErrorMessage(`${modifiers_} is not a legal modifier!`);
+            window.showErrorMessage(`${modifier} is not a legal modifier!`);
           }
         }
         if (key in keys) {
