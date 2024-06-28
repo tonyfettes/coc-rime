@@ -49,7 +49,7 @@ export class Rime {
     return this.isEnabled;
   }
 
-  async processKey(keycode: number, modifiers: string | string[]): Promise<void> {
+  async processKey(key: string, modifiers: string | string[]): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       try {
         if (typeof modifiers === 'string') {
@@ -65,7 +65,15 @@ export class Rime {
             resolve();
           }
         }
-        binding.processKey(this.sessionId, keycode, sum);
+        if (key in keys) {
+          let keycode = keys[key];
+          binding.processKey(this.sessionId, keycode, sum);
+        } else if (key.length === 1) {
+          let keycode = key.charCodeAt(0);
+          binding.processKey(this.sessionId, keycode, sum);
+        } else {
+          window.showErrorMessage(`${key} is not a legal key!`);
+        }
         resolve();
       } catch (e) {
         reject(e);
@@ -113,13 +121,13 @@ export class Rime {
     return new Promise<RimeContext>((resolve, reject) => {
       try {
         for (const singleChar of input) {
-          this.processKey(singleChar.charCodeAt(0), []);
+          this.processKey(singleChar, []);
         }
         let context = binding.getContext(this.sessionId);
         let result = context;
         if (input !== '')
           while (!context.menu.is_last_page) {
-            this.processKey('='.charCodeAt(0), []);
+            this.processKey('=', []);
             context = binding.getContext(this.sessionId);
             result.menu.num_candidates += context.menu.num_candidates;
             if (result.menu?.select_keys && context.menu?.select_keys) {
