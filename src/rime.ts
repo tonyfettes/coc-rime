@@ -49,19 +49,23 @@ export class Rime {
     return this.isEnabled;
   }
 
-  async processKey(keycode: number, modifier: string): Promise<void> {
+  async processKey(keycode: number, modifiers: string | string[]): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       try {
-        let mask = modifiers.indexOf(modifier);
-        if (modifier === '') {
-          mask = 0;
-        } else if (mask !== -1) {
-          mask = 2 ** mask;
-        } else {
-          window.showErrorMessage(`${modifier} is not a legal modifier!`);
-          resolve();
+        if (typeof modifiers === 'string') {
+          modifiers = [modifiers];
         }
-        binding.processKey(this.sessionId, keycode, mask);
+        let sum = 0;
+        for (const modifier of modifiers) {
+          let mask = modifiers.indexOf(modifier);
+          if (mask !== -1) {
+            sum += 2 ** mask;
+          } else {
+            window.showErrorMessage(`${modifiers} is not a legal modifier!`);
+            resolve();
+          }
+        }
+        binding.processKey(this.sessionId, keycode, sum);
         resolve();
       } catch (e) {
         reject(e);
@@ -109,13 +113,13 @@ export class Rime {
     return new Promise<RimeContext>((resolve, reject) => {
       try {
         for (const singleChar of input) {
-          this.processKey(singleChar.charCodeAt(0), '');
+          this.processKey(singleChar.charCodeAt(0), []);
         }
         let context = binding.getContext(this.sessionId);
         let result = context;
         if (input !== '')
           while (!context.menu.is_last_page) {
-            this.processKey('='.charCodeAt(0), '');
+            this.processKey('='.charCodeAt(0), []);
             context = binding.getContext(this.sessionId);
             result.menu.num_candidates += context.menu.num_candidates;
             if (result.menu?.select_keys && context.menu?.select_keys) {
