@@ -9,6 +9,8 @@ Rime input method integration of coc.nvim
 
 ![screenshot](https://user-images.githubusercontent.com/29998228/111900984-6c20ef00-8a70-11eb-9920-4d9da5102a48.gif)
 
+![screencast](https://github.com/tonyfettes/coc-rime/assets/32936898/4c569861-9ddd-429d-8516-6753985c1756)
+
 ## Dependencies
 
 - [rime](https://rime.im/)
@@ -43,9 +45,12 @@ let g:coc_global_extensions = ['coc-rime', 'other coc-plugins']
 
 ## Commands
 
-1. `rime.enable`: enable this source temporarily.
-2. `rime.disable`: disable this source temporarily.
-3. `rime.toggle`: temporarily toggle the status of the source.
+1. `rime.source.enable`: enable this source temporarily.
+2. `rime.source.disable`: disable this source temporarily.
+3. `rime.source.toggle`: temporarily toggle the status of the source.
+4. `rime.enable`: enable this IME temporarily.
+5. `rime.disable`: disable this IME temporarily.
+6. `rime.toggle`: toggle this IME temporarily.
 
 ## Lists
 
@@ -65,6 +70,17 @@ You could use `CocList` to switch between schema.
 5. `rime.traits.shared_data_dir`: Path(s) where rime data stores
 6. `rime.traits.user_data_dir`: Path(s) where rime configuration stores
 7. `rime.traits.*`: More rime traits
+8. `rime.ui.*`: The symbols used for IME UI
+9. `rime.keymaps`: The keymaps from vim to rime
+
+## Limitations
+
+- <https://github.com/neoclide/coc.nvim/discussions/5056#discussioncomment-9869792>
+  broke ascii mode due to `let v:char = 0`.
+- `imapclear` broke all `imap <Buffer>` created by other plugins, such as
+  [vim-peekaboo](http://github.com/junegunn/vim-peekaboo)'s `<C-R>`.
+- all keymaps in `rime.keymaps` are captured by rime which will not be used by
+  vim. It is inconvenient for some users who use `imap`.
 
 ## License
 
