@@ -146,8 +146,10 @@ export class Rime {
         let [r, c] = await workspace.nvim.request('nvim_win_get_cursor', [0]);
         await workspace.nvim.request('nvim_buf_set_text', [0, r - 1, c, r - 1, c, [text]]);
         await workspace.nvim.request('nvim_win_set_cursor', [0, [r, c + Buffer.from(text).length]]);
-        await this.win.close(false);
-        this.win = null;
+        if (this.win && (await this.win.valid)) {
+          await this.win.close(false);
+          this.win = null;
+        }
         return;
       }
     }
