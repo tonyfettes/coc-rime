@@ -104,6 +104,10 @@ MIT
 - [fcitx5.nvim](https://github.com/tonyfettes/fcitx5.nvim)
 - [fcitx5-ui.nvim](https://github.com/black-desk/fcitx5-ui.nvim)
 
+#### [rime](https://github.com/rime/librime)
+
+- [cmp-rime](https://github.com/Ninlives/cmp-rime)
+
 本项目希望为不可能使用输入法的环境中提供必要的中文支持：
 
 - 文本终端。例如在构建 Linux 时添加
