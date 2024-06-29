@@ -9,7 +9,7 @@ Rime input method integration of coc.nvim
 
 ![screenshot](https://user-images.githubusercontent.com/29998228/111900984-6c20ef00-8a70-11eb-9920-4d9da5102a48.gif)
 
-![screencast](https://github.com/tonyfettes/coc-rime/assets/32936898/4c569861-9ddd-429d-8516-6753985c1756)
+![screencast](https://github.com/tonyfettes/coc-rime/assets/32936898/2a31084e-b7a4-4d6a-a6da-e3e85ae83c33)
 
 ## Dependencies
 
