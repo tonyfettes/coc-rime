@@ -28,7 +28,7 @@ export interface Traits {
   min_log_level?: 0 | 1 | 2 | 3;
 }
 
-export interface RimeComposition {
+export interface Composition {
   length: number;
   cursor_pos: number;
   sel_start: number;
@@ -36,31 +36,31 @@ export interface RimeComposition {
   preedit?: string;
 }
 
-export interface RimeCandidate {
+export interface Candidate {
   text: string;
   comment?: string;
 }
 
-export interface RimeMenu {
+export interface Menu {
   page_size: number;
   page_no: number;
   is_last_page: boolean;
   highlighted_candidate_index: number;
   num_candidates: number;
-  candidates?: RimeCandidate[];
+  candidates?: Candidate[];
   select_keys?: string[];
 }
 
-export interface RimeContext {
-  composition: RimeComposition;
-  menu: RimeMenu;
+export interface Context {
+  composition: Composition;
+  menu: Menu;
 }
 
-export interface RimeSchema {
+export interface Schema {
   schema_id: string;
   name: string;
 }
 
-export interface RimeCommit {
+export interface Commit {
   text: string;
 }

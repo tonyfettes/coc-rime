@@ -1,7 +1,7 @@
 import { workspace, NvimFloatOptions, Window, window } from 'coc.nvim';
 import { UI, Keymap } from './config';
 import { Traits } from './binding';
-import { default as binding, RimeContext, RimeSchema, RimeCommit } from './binding';
+import { default as binding, Context, Schema, Commit } from './binding';
 import { default as modifiers } from './modifiers.json';
 import { default as keys } from './keys.json';
 
@@ -11,7 +11,7 @@ export class Rime {
   private readonly ui: UI;
   private readonly keymaps: Keymap[];
   private sessionId: BigInt;
-  private schemaList: RimeSchema[];
+  private schemaList: Schema[];
   private schemaId: string;
   private win: Window | null = null;
 
@@ -85,8 +85,8 @@ export class Rime {
     });
   }
 
-  async getContext(): Promise<RimeContext> {
-    return new Promise<RimeContext>((resolve, reject) => {
+  async getContext(): Promise<Context> {
+    return new Promise<Context>((resolve, reject) => {
       try {
         resolve(binding.getContext(this.sessionId));
       } catch (e) {
@@ -100,7 +100,7 @@ export class Rime {
       try {
         let text = '';
         if (binding.commitComposition(this.sessionId)) {
-          let commit: RimeCommit = binding.getCommit(this.sessionId);
+          let commit: Commit = binding.getCommit(this.sessionId);
           text = commit.text;
         }
         resolve(text);
@@ -274,8 +274,8 @@ export class Rime {
     return;
   }
 
-  async getContextWithAllCandidates(input: string): Promise<RimeContext> {
-    return new Promise<RimeContext>((resolve, reject) => {
+  async getContextWithAllCandidates(input: string): Promise<Context> {
+    return new Promise<Context>((resolve, reject) => {
       try {
         for (const singleChar of input) {
           this.processKey(singleChar, [], '');
@@ -303,8 +303,8 @@ export class Rime {
     });
   }
 
-  async getSchemaList(): Promise<RimeSchema[]> {
-    return new Promise<RimeSchema[]>((resolve, reject) => {
+  async getSchemaList(): Promise<Schema[]> {
+    return new Promise<Schema[]>((resolve, reject) => {
       try {
         if (this.schemaList === undefined) this.schemaList = binding.getSchemaList();
         resolve(this.schemaList);
