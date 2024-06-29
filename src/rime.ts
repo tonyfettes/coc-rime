@@ -1,19 +1,18 @@
 import { window } from 'coc.nvim';
-import { Traits, UI } from './config';
+import { UI } from './config';
+import { Traits } from './binding';
 import { default as binding, RimeContext, RimeSchema, RimeCommit } from './binding';
 import { default as modifiers } from './modifiers.json';
 import { default as keys } from './keys.json';
 
 export class Rime {
   private isEnabled: boolean = true;
-  private readonly traits: Traits;
   private readonly ui: UI;
   private sessionId: BigInt;
   private schemaList: RimeSchema[];
   private schemaId: string;
 
   constructor(traits: Traits, ui: UI) {
-    this.traits = traits;
     this.ui = ui;
     binding.init(traits);
     this.sessionId = binding.createSession();

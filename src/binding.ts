@@ -17,6 +17,17 @@ try {
 }
 export default binding;
 
+export interface Traits {
+  shared_data_dir?: string | null;
+  user_data_dir?: string | null;
+  log_dir?: string | null;
+  distribution_name?: string | null;
+  distribution_code_name: string;
+  distribution_version: string;
+  app_name?: string | null;
+  min_log_level?: 0 | 1 | 2 | 3;
+}
+
 export interface RimeComposition {
   length: number;
   cursor_pos: number;

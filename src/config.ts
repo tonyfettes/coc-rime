@@ -1,5 +1,6 @@
 import { realpath, mkdir } from 'fs/promises';
 import { workspace, WorkspaceConfiguration, ExtensionContext } from 'coc.nvim';
+import { Traits } from './binding';
 
 async function get_dir(...dirs: string[]): Promise<string> {
   for (const dir of dirs) {
@@ -8,17 +9,6 @@ async function get_dir(...dirs: string[]): Promise<string> {
     } catch (e) {}
   }
   return '';
-}
-
-export interface Traits {
-  shared_data_dir?: string | null;
-  user_data_dir?: string | null;
-  log_dir?: string | null;
-  distribution_name?: string | null;
-  distribution_code_name: string;
-  distribution_version: string;
-  app_name?: string | null;
-  min_log_level?: 0 | 1 | 2 | 3;
 }
 
 export interface UI {
