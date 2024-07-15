@@ -282,7 +282,16 @@ export class Rime {
     workspace.nvim.command('au! coc_dynamic_autocmd InsertCharPre');
     workspace.nvim.command('au! coc_dynamic_autocmd InsertLeave');
     workspace.nvim.command('au! coc_dynamic_autocmd WinLeave');
-    workspace.nvim.command('imapclear <buffer>');
+    workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', '<Space>']);
+    for (const number of Array.from(Array(0x7b - 0x21).keys())) {
+      let char = String.fromCharCode(0x21 + number);
+      workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', char]);
+    }
+    workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', '<Bar>']);
+    for (const number of Array.from(Array(0x7e - 0x7d).keys())) {
+      let char = String.fromCharCode(0x7d + number);
+      workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', char]);
+    }
     this.isRegisterd = false;
     return;
   }
