@@ -31,7 +31,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
     statusBarItem.show();
   }
   for (const keymap of userConfig.keymaps) {
-    rime.registerKeymap(keymap.key, keymap.modifiers, keymap.lhs);
+    rime.registerKeymap(keymap.key, keymap.modifiers);
   }
 
   context.subscriptions.push(

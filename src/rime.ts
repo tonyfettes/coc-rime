@@ -54,7 +54,7 @@ export class Rime {
     return this.isEnabled;
   }
 
-  async processKey(key: string, modifiers_: string[], lhs: string): Promise<void> {
+  async processKey(key: string, modifiers_: string[]): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
       try {
         let sum = 0;
@@ -118,11 +118,11 @@ export class Rime {
     });
   }
 
-  registerKeymap(key: string, modifiers: string[], lhs: string) {
+  registerKeymap(key: string, modifiers: string[]) {
     // https://github.com/rime/librime/blob/master/src/rime/key_table.cc
     if (key in keys) {
       workspace.registerKeymap(['i'], ['rime', ...modifiers, key].join('-'), async () => {
-        this.drawUI(key, modifiers, lhs);
+        this.drawUI(key, modifiers);
       });
       return;
     }
@@ -142,9 +142,9 @@ export class Rime {
     this.resetKeymaps();
   }
 
-  async drawUI(key: string, modifiers_: string[], lhs: string): Promise<void> {
+  async drawUI(key: string, modifiers_: string[]): Promise<void> {
     try {
-      await this.processKey(key, modifiers_, lhs);
+      await this.processKey(key, modifiers_);
     } catch (e) {
       this.feedkeys(key);
       return;
@@ -248,7 +248,7 @@ export class Rime {
       pattern: '<buffer>',
       arglist: ['v:char', 'execute("let v:char = \'\'")'],
       callback: async (character, _) => {
-        this.drawUI(character, [], '');
+        this.drawUI(character, []);
       },
     });
 
@@ -300,13 +300,13 @@ export class Rime {
     return new Promise<Context>((resolve, reject) => {
       try {
         for (const singleChar of input) {
-          this.processKey(singleChar, [], '');
+          this.processKey(singleChar, []);
         }
         let context = binding.getContext(this.sessionId);
         let result = context;
         if (input !== '')
           while (!context.menu.is_last_page) {
-            this.processKey('=', [], '');
+            this.processKey('=', []);
             context = binding.getContext(this.sessionId);
             result.menu.num_candidates += context.menu.num_candidates;
             if (result.menu?.select_keys && context.menu?.select_keys) {
