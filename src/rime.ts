@@ -263,6 +263,7 @@ export class Rime {
       },
     });
 
+    workspace.nvim.request('nvim_buf_set_keymap', [0, 'i', '<Space>', '<Space>', { noremap: true, nowait: true }]);
     for (const number of Array.from(Array(0x7b - 0x21).keys())) {
       let char = String.fromCharCode(0x21 + number);
       workspace.nvim.request('nvim_buf_set_keymap', [0, 'i', char, char, { noremap: true, nowait: true }]);
