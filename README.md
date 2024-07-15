@@ -71,16 +71,13 @@ You could use `CocList` to switch between schema.
 6. `rime.traits.user_data_dir`: Path(s) where rime configuration stores
 7. `rime.traits.*`: More rime traits
 8. `rime.ui.*`: The symbols used for IME UI
-9. `rime.keymaps`: The keymaps from vim to rime
 
 ## Limitations
 
 - <https://github.com/neoclide/coc.nvim/discussions/5056#discussioncomment-9869792>
   broke ascii mode due to `let v:char = 0`.
-- `imapclear` broke all `imap <Buffer>` created by other plugins, such as
+- It will break all `imap <Buffer>` created by other plugins, such as
   [vim-peekaboo](http://github.com/junegunn/vim-peekaboo)'s `<C-R>`.
-- all keymaps in `rime.keymaps` are captured by rime which will not be used by
-  vim. It is inconvenient for some users who use `imap`.
 
 ## License
 

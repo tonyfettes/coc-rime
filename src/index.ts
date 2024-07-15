@@ -10,7 +10,7 @@ let rime: Rime;
 export async function activate(context: ExtensionContext): Promise<void> {
   const userConfig = new Config(context);
 
-  rime = new Rime(await userConfig.traits, userConfig.ui, userConfig.keymaps);
+  rime = new Rime(await userConfig.traits, userConfig.ui);
   rime.setCompletionStatus(userConfig.enabled);
   const statusBarItem = window.createStatusBarItem(0, { progress: false });
   rime.getSchema().then((schemaId) => {
@@ -29,9 +29,6 @@ export async function activate(context: ExtensionContext): Promise<void> {
   });
   if (userConfig.enabled) {
     statusBarItem.show();
-  }
-  for (const keymap of userConfig.keymaps) {
-    rime.registerKeymap(keymap.key, keymap.modifiers);
   }
 
   context.subscriptions.push(

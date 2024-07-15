@@ -1,9 +1,11 @@
 import { workspace, NvimFloatOptions, Window, window } from 'coc.nvim';
-import { UI, Keymap } from './config';
+import { UI } from './config';
 import { Traits } from './binding';
 import { default as binding, Context, Schema, Commit } from './binding';
 import { default as modifiers } from './modifiers.json';
 import { default as keys } from './keys.json';
+
+let specialKeys = ['Up', 'Down', 'Left', 'Right', 'Home', 'End', 'PageUp', 'PageDown'];
 
 export class Rime {
   private isEnabled: boolean = true;
@@ -11,17 +13,50 @@ export class Rime {
   private preedit: string = '';
   private isRegisterd: boolean = false;
   private readonly ui: UI;
-  private readonly keymaps: Keymap[];
   private sessionId: BigInt;
   private schemaList: Schema[];
   private schemaId: string;
   private win: Window | null = null;
 
-  constructor(traits: Traits, ui: UI, keymaps: Keymap[]) {
+  constructor(traits: Traits, ui: UI) {
     this.ui = ui;
-    this.keymaps = keymaps;
     binding.init(traits);
     this.sessionId = binding.createSession();
+    for (const specialKey of specialKeys) {
+      let keyname = specialKey.replace('Page', 'Page_');
+      this.registerKeymap(keyname, []);
+      this.registerKeymap(keyname, ['Control']);
+      this.registerKeymap(keyname, ['Alt']);
+      this.registerKeymap(keyname, ['Alt', 'Control']);
+    }
+    for (const number of Array.from(Array(35).keys())) {
+      let num = number + 1;
+      this.registerKeymap('F' + num, []);
+    }
+    this.registerKeymap('BackSpace', []);
+    this.registerKeymap('space', ['Control']);
+    this.registerKeymap('BackSpace', ['Alt']);
+    this.registerKeymap('space', ['Alt', 'Control']);
+    for (const number of Array.from(Array(0x5f - 0x41).keys())) {
+      let char = String.fromCharCode(0x41 + number).toLowerCase();
+      this.registerKeymap(char, ['Control']);
+      this.registerKeymap(char, ['Alt', 'Control']);
+    }
+    this.registerKeymap('space', ['Alt']);
+    for (const number of Array.from(Array(0x3b - 0x21).keys())) {
+      let char = String.fromCharCode(0x21 + number);
+      this.registerKeymap(char, ['Alt']);
+    }
+    this.registerKeymap('less', []);
+    for (const number of Array.from(Array(0x7b - 0x3d).keys())) {
+      let char = String.fromCharCode(0x3d + number);
+      this.registerKeymap(char, ['Alt']);
+    }
+    this.registerKeymap('bar', ['Alt']);
+    for (const number of Array.from(Array(0x7e - 0x7d).keys())) {
+      let char = String.fromCharCode(0x7d + number);
+      this.registerKeymap(char, ['Alt']);
+    }
   }
 
   destroy() {
@@ -120,13 +155,9 @@ export class Rime {
 
   registerKeymap(key: string, modifiers: string[]) {
     // https://github.com/rime/librime/blob/master/src/rime/key_table.cc
-    if (key in keys) {
-      workspace.registerKeymap(['i'], ['rime', ...modifiers, key].join('-'), async () => {
-        this.drawUI(key, modifiers);
-      });
-      return;
-    }
-    window.showErrorMessage(`${key} is not a legal key!`);
+    workspace.registerKeymap(['i'], ['rime', ...modifiers, key].join('-'), async () => {
+      this.drawUI(key, modifiers);
+    });
   }
 
   async feedkeys(text: string): Promise<void> {
@@ -224,19 +255,166 @@ export class Rime {
 
   async resetKeymaps(): Promise<void> {
     if (this.preedit !== '' && this.hasSetKeymaps === false) {
-      for (const keymap of this.keymaps) {
+      for (const specialKey of specialKeys) {
+        let keyname = specialKey.replace('Page', 'Page_');
+        let lhs = '<' + specialKey + '>';
         workspace.nvim.request('nvim_buf_set_keymap', [
           0,
           'i',
-          keymap.lhs,
-          ['<Plug>(coc-rime', ...keymap.modifiers, keymap.key + ')'].join('-'),
+          lhs,
+          '<Plug>(coc-rime-' + keyname + ')',
+          { nowait: true },
+        ]);
+        lhs = '<C-' + specialKey + '>';
+        workspace.nvim.request('nvim_buf_set_keymap', [
+          0,
+          'i',
+          lhs,
+          '<Plug>(coc-rime-Control-' + keyname + ')',
+          { nowait: true },
+        ]);
+        lhs = '<M-' + specialKey + '>';
+        workspace.nvim.request('nvim_buf_set_keymap', [
+          0,
+          'i',
+          lhs,
+          '<Plug>(coc-rime-Alt-' + keyname + ')',
+          { nowait: true },
+        ]);
+        lhs = '<M-C-' + specialKey + '>';
+        workspace.nvim.request('nvim_buf_set_keymap', [
+          0,
+          'i',
+          lhs,
+          '<Plug>(coc-rime-Alt-Control-' + keyname + ')',
+          { nowait: true },
+        ]);
+      }
+      for (const number of Array.from(Array(35).keys())) {
+        let num = number + 1;
+        let keyname = 'F' + num;
+        let lhs = '<' + keyname + '>';
+        workspace.nvim.request('nvim_buf_set_keymap', [
+          0,
+          'i',
+          lhs,
+          '<Plug>(coc-rime-' + keyname + ')',
+          { nowait: true },
+        ]);
+      }
+      workspace.nvim.request('nvim_buf_set_keymap', [0, 'i', '<BS>', '<Plug>(coc-rime-BackSpace)', { nowait: true }]);
+      workspace.nvim.request('nvim_buf_set_keymap', [
+        0,
+        'i',
+        '<C-Space>',
+        '<Plug>(coc-rime-Control-BackSpace)',
+        { nowait: true },
+      ]);
+      workspace.nvim.request('nvim_buf_set_keymap', [
+        0,
+        'i',
+        '<M-BS>',
+        '<Plug>(coc-rime-Alt-BackSpace)',
+        { nowait: true },
+      ]);
+      workspace.nvim.request('nvim_buf_set_keymap', [
+        0,
+        'i',
+        '<M-C-Space>',
+        '<Plug>(coc-rime-Alt-Control-space)',
+        { nowait: true },
+      ]);
+      for (const number of Array.from(Array(0x5f - 0x41).keys())) {
+        let char = String.fromCharCode(0x41 + number).toLowerCase();
+        workspace.nvim.request('nvim_buf_set_keymap', [
+          0,
+          'i',
+          '<C-' + char + '>',
+          '<Plug>(coc-rime-Control-' + char + ')',
+          { nowait: true },
+        ]);
+        workspace.nvim.request('nvim_buf_set_keymap', [
+          0,
+          'i',
+          '<M-C-' + char + '>',
+          '<Plug>(coc-rime-Alt-Control-' + char + ')',
+          { nowait: true },
+        ]);
+      }
+      workspace.nvim.request('nvim_buf_set_keymap', [
+        0,
+        'i',
+        '<M-Space>',
+        '<Plug>(coc-rime-Alt-space)',
+        { nowait: true },
+      ]);
+      for (const number of Array.from(Array(0x3b - 0x21).keys())) {
+        let char = String.fromCharCode(0x21 + number);
+        workspace.nvim.request('nvim_buf_set_keymap', [
+          0,
+          'i',
+          '<M-' + char + '>',
+          '<Plug>(coc-rime-Alt-' + char + ')',
+          { nowait: true },
+        ]);
+      }
+      workspace.nvim.request('nvim_buf_set_keymap', [0, 'i', '<M-lt>', '<Plug>(coc-rime-Alt-less)', { nowait: true }]);
+      for (const number of Array.from(Array(0x7b - 0x3d).keys())) {
+        let char = String.fromCharCode(0x3d + number);
+        workspace.nvim.request('nvim_buf_set_keymap', [
+          0,
+          'i',
+          '<M-' + char + '>',
+          '<Plug>(coc-rime-Alt-' + char + ')',
+          { nowait: true },
+        ]);
+      }
+      workspace.nvim.request('nvim_buf_set_keymap', [0, 'i', '<M-bar>', '<Plug>(coc-rime-Alt-bar)', { nowait: true }]);
+      for (const number of Array.from(Array(0x7e - 0x7d).keys())) {
+        let char = String.fromCharCode(0x7d + number);
+        workspace.nvim.request('nvim_buf_set_keymap', [
+          0,
+          'i',
+          '<M-' + char + '>',
+          '<Plug>(coc-rime-Alt-' + char + ')',
           { nowait: true },
         ]);
       }
       this.hasSetKeymaps = true;
     } else if (this.preedit === '' && this.hasSetKeymaps === true) {
-      for (const keymap of this.keymaps) {
-        workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', keymap.lhs]);
+      for (const specialKey of specialKeys) {
+        workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', '<' + specialKey + '>']);
+        workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', '<C-' + specialKey + '>']);
+        workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', '<M-' + specialKey + '>']);
+        workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', '<M-C-' + specialKey + '>']);
+      }
+      for (const number of Array.from(Array(35).keys())) {
+        let num = number + 1;
+        workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', '<F' + num + '>']);
+      }
+      workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', '<BS>']);
+      workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', '<C-Space>']);
+      workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', '<M-BS>']);
+      workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', '<M-C-Space>']);
+      for (const number of Array.from(Array(0x5f - 0x41).keys())) {
+        let char = String.fromCharCode(0x41 + number).toLowerCase();
+        workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', '<C-' + char + '>']);
+        workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', '<M-C-' + char + '>']);
+      }
+      workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', '<M-Space>']);
+      for (const number of Array.from(Array(0x3b - 0x21).keys())) {
+        let char = String.fromCharCode(0x21 + number);
+        workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', '<M-' + char + '>']);
+      }
+      workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', '<M-lt>']);
+      for (const number of Array.from(Array(0x7b - 0x3d).keys())) {
+        let char = String.fromCharCode(0x3d + number);
+        workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', '<M-' + char + '>']);
+      }
+      workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', '<M-Bar>']);
+      for (const number of Array.from(Array(0x7e - 0x7d).keys())) {
+        let char = String.fromCharCode(0x7d + number);
+        workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', '<M-' + char + '>']);
       }
       this.hasSetKeymaps = false;
     }
