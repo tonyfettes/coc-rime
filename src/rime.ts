@@ -7,6 +7,8 @@ import { default as keys } from './keys.json';
 
 export class Rime {
   private isEnabled: boolean = true;
+  private hasSetKeymaps: boolean = false;
+  private preedit: string = '';
   private isRegisterd: boolean = false;
   private readonly ui: UI;
   private readonly keymaps: Keymap[];
@@ -71,12 +73,7 @@ export class Rime {
         try {
           binding.processKey(this.sessionId, keycode, sum);
         } catch (error) {
-          // https://github.com/neoclide/coc.nvim/discussions/5069
-          if (lhs === '<BS>') {
-            lhs = '<C-H>';
-          }
-          let code: string = await workspace.nvim.request('nvim_replace_termcodes', [lhs, true, false, true]);
-          await workspace.nvim.request('nvim_feedkeys', [code, 'n', false]);
+          reject(error);
         }
         resolve();
       } catch (e) {
@@ -132,24 +129,37 @@ export class Rime {
     window.showErrorMessage(`${key} is not a legal key!`);
   }
 
+  async feedkeys(text: string): Promise<void> {
+    // don't use nvim_feedkeys() due to InsertCharPre recursively
+    let [r, c] = await workspace.nvim.request('nvim_win_get_cursor', [0]);
+    await workspace.nvim.request('nvim_buf_set_text', [0, r - 1, c, r - 1, c, [text]]);
+    await workspace.nvim.request('nvim_win_set_cursor', [0, [r, c + Buffer.from(text).length]]);
+    if (this.win && (await this.win.valid)) {
+      await this.win.close(false);
+      this.win = null;
+    }
+    this.preedit = '';
+    this.resetKeymaps();
+  }
+
   async drawUI(key: string, modifiers_: string[], lhs: string): Promise<void> {
-    await this.processKey(key, modifiers_, lhs);
+    try {
+      await this.processKey(key, modifiers_, lhs);
+    } catch (e) {
+      this.feedkeys(key);
+      return;
+    }
     let context = await this.getContext();
-    let preedit = context.composition.preedit ?? '';
-    preedit =
-      preedit.slice(0, context.composition.cursor_pos) + this.ui.cursor + preedit.slice(context.composition.cursor_pos);
+    this.preedit = context.composition.preedit ?? '';
+    let preedit =
+      this.preedit.slice(0, context.composition.cursor_pos) +
+      this.ui.cursor +
+      this.preedit.slice(context.composition.cursor_pos);
     let candidates = context.menu.candidates ?? [];
     if (candidates.length === 0) {
       let text = await this.getCommit();
       if (text !== '') {
-        // don't use nvim_feedkeys() due to InsertCharPre recursively
-        let [r, c] = await workspace.nvim.request('nvim_win_get_cursor', [0]);
-        await workspace.nvim.request('nvim_buf_set_text', [0, r - 1, c, r - 1, c, [text]]);
-        await workspace.nvim.request('nvim_win_set_cursor', [0, [r, c + Buffer.from(text).length]]);
-        if (this.win && (await this.win.valid)) {
-          await this.win.close(false);
-          this.win = null;
-        }
+        this.feedkeys(text);
         return;
       }
     }
@@ -209,6 +219,27 @@ export class Rime {
       (await this.win.buffer).setLines(lines);
       await this.win.setConfig(config);
     }
+    this.resetKeymaps();
+  }
+
+  async resetKeymaps(): Promise<void> {
+    if (this.preedit !== '' && this.hasSetKeymaps === false) {
+      for (const keymap of this.keymaps) {
+        workspace.nvim.request('nvim_buf_set_keymap', [
+          0,
+          'i',
+          keymap.lhs,
+          ['<Plug>(coc-rime', ...keymap.modifiers, keymap.key + ')'].join('-'),
+          { nowait: true },
+        ]);
+      }
+      this.hasSetKeymaps = true;
+    } else if (this.preedit === '' && this.hasSetKeymaps === true) {
+      for (const keymap of this.keymaps) {
+        workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', keymap.lhs]);
+      }
+      this.hasSetKeymaps = false;
+    }
   }
 
   register(): Promise<void> {
@@ -232,7 +263,6 @@ export class Rime {
       },
     });
 
-    workspace.nvim.request('nvim_buf_set_keymap', [0, 'i', '<Space>', '<Space>', { noremap: true, nowait: true }]);
     for (const number of Array.from(Array(0x7b - 0x21).keys())) {
       let char = String.fromCharCode(0x21 + number);
       workspace.nvim.request('nvim_buf_set_keymap', [0, 'i', char, char, { noremap: true, nowait: true }]);
@@ -241,16 +271,6 @@ export class Rime {
     for (const number of Array.from(Array(0x7e - 0x7d).keys())) {
       let char = String.fromCharCode(0x7d + number);
       workspace.nvim.request('nvim_buf_set_keymap', [0, 'i', char, char, { noremap: true, nowait: true }]);
-    }
-
-    for (const keymap of this.keymaps) {
-      workspace.nvim.request('nvim_buf_set_keymap', [
-        0,
-        'i',
-        keymap.lhs,
-        ['<Plug>(coc-rime', ...keymap.modifiers, keymap.key + ')'].join('-'),
-        { nowait: true },
-      ]);
     }
 
     this.isRegisterd = true;
