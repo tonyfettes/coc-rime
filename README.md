@@ -74,8 +74,6 @@ You could use `CocList` to switch between schema.
 
 ## Limitations
 
-- <https://github.com/neoclide/coc.nvim/discussions/5056#discussioncomment-9869792>
-  broke ascii mode due to `let v:char = 0`.
 - It will break all `imap <Buffer>` created by other plugins, such as
   [vim-peekaboo](http://github.com/junegunn/vim-peekaboo)'s `<C-R>`.
 
