@@ -192,7 +192,7 @@ export class Rime {
       this.ui.cursor +
       this.preedit.slice(context.composition.cursor_pos);
     let candidates = context.menu.candidates ?? [];
-    if (candidates.length === 0) {
+    if (context.menu.num_candidates === 0) {
       let text = await this.getCommit();
       if (text !== '') {
         this.feedkeys(text);
@@ -216,7 +216,7 @@ export class Rime {
       }
       candidates_ = candidates_ + text;
     }
-    if (context.menu.page_size === context.menu.highlighted_candidate_index + 1) {
+    if (context.menu.num_candidates === context.menu.highlighted_candidate_index + 1) {
       candidates_ = candidates_ + this.ui.right_sep;
     } else {
       candidates_ = candidates_ + ' ';
