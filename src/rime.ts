@@ -33,6 +33,9 @@ export class Rime {
       let num = number + 1;
       this.registerKeymap('F' + num, []);
     }
+    this.registerKeymap('Return', ['Control']);
+    this.registerKeymap('Return', ['Shift']);
+    this.registerKeymap('Tab', ['Shift']);
     this.registerKeymap('BackSpace', []);
     this.registerKeymap('space', ['Control']);
     this.registerKeymap('BackSpace', ['Alt']);
@@ -307,6 +310,27 @@ export class Rime {
           { nowait: true },
         ]);
       }
+      workspace.nvim.request('nvim_buf_set_keymap', [
+        0,
+        'i',
+        '<C-CR>',
+        '<Plug>(coc-rime-Shift-Return)',
+        { nowait: true },
+      ]);
+      workspace.nvim.request('nvim_buf_set_keymap', [
+        0,
+        'i',
+        '<S-CR>',
+        '<Plug>(coc-rime-Shift-Return)',
+        { nowait: true },
+      ]);
+      workspace.nvim.request('nvim_buf_set_keymap', [
+        0,
+        'i',
+        '<S-Tab>',
+        '<Plug>(coc-rime-Shift-Tab)',
+        { nowait: true },
+      ]);
       workspace.nvim.request('nvim_buf_set_keymap', [0, 'i', '<BS>', '<Plug>(coc-rime-BackSpace)', { nowait: true }]);
       workspace.nvim.request('nvim_buf_set_keymap', [
         0,
@@ -419,6 +443,9 @@ export class Rime {
         let num = number + 1;
         workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', '<F' + num + '>']);
       }
+      workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', '<C-CR>']);
+      workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', '<S-CR>']);
+      workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', '<S-Tab>']);
       workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', '<BS>']);
       workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', '<C-Space>']);
       workspace.nvim.request('nvim_buf_del_keymap', [0, 'i', '<M-BS>']);
