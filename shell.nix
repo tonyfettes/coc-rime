@@ -8,5 +8,6 @@ mkShell {
     nodejs
     pkg-config
     python3
+    stdenv.cc
   ];
 }
