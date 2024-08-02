@@ -28,7 +28,7 @@ apt-get -y install pkg-config librime
 # without any extra operation
 # Brew
 brew tap tonyfettes/homebrew-rime
-brew install pkg-config rime
+brew install pkg-config librime
 ```
 
 ## Install
