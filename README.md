@@ -19,16 +19,18 @@ Rime input method integration of coc.nvim
 ```sh
 # Ubuntu
 sudo apt-get -y install pkg-config librime-dev librime1
-sudo apt-mark auto librime-dev
+sudo apt-mark auto librime-dev pkg-config
 # ArchLinux
 sudo pacman -S pkg-config librime
 # Android Termux
 apt-get -y install pkg-config librime
 # Nix
 # without any extra operation
-# Brew
+# homebrew
 brew tap tonyfettes/homebrew-rime
 brew install pkg-config librime
+# Windows msys2
+pacboy -S --noconfirm pkg-config:x librime:x gcc:x
 ```
 
 ## Install
