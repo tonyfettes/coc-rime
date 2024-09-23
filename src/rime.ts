@@ -227,7 +227,7 @@ export class Rime {
     let col = 0;
     let left = this.ui.left;
     if (context.menu.page_no !== 0) {
-      let num = await workspace.nvim.request('nvim_strwidth', [left]);
+      let num = await workspace.nvim.strWidth(left);
       candidates_ = left + candidates_;
       preedit = ' '.repeat(num) + preedit;
       col = col - num;
@@ -238,7 +238,7 @@ export class Rime {
     let lines = [preedit, candidates_];
     let width = 0;
     for (const line of lines) {
-      width = Math.max(await workspace.nvim.request('nvim_strwidth', [line]), width);
+      width = Math.max(await workspace.nvim.strWidth(line), width);
     }
     let config: NvimFloatOptions = {
       relative: 'cursor',
