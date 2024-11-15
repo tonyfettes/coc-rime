@@ -8,6 +8,9 @@
             "sources": [
                 "binding.c",
             ],
+            "defines": [
+                "RIME_API_VERSION=<!@(pkg-config --modversion rime|sed 's/\\.//g')"
+            ],
             "cflags": [
                 "<!@(pkg-config --cflags rime)",
             ],
