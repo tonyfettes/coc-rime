@@ -1,5 +1,9 @@
 #include <node_api.h>
+#if RIME_API_VERSION >= 1120
+#include <rime_api_deprecated.h>
+#else
 #include <rime_api.h>
+#endif
 #include <stdio.h>
 
 #define DEFAULT_BUFFER_SIZE 1024
