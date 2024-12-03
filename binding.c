@@ -1,9 +1,5 @@
 #include <node_api.h>
-#if RIME_API_VERSION >= 1120
-#include <rime_api_deprecated.h>
-#else
 #include <rime_api.h>
-#endif
 #include <stdio.h>
 
 #define DEFAULT_BUFFER_SIZE 1024
@@ -74,6 +70,8 @@
     }                                                                          \
   } while (0);
 
+static RimeApi *rime;
+
 static napi_value init(napi_env env, napi_callback_info info) {
   napi_value argv[1];
   SET_ARGV(env, argv);
@@ -102,14 +100,14 @@ static napi_value init(napi_env env, napi_callback_info info) {
     NODE_API_CALL(
         env, napi_get_value_int32(env, result, &rime_traits.min_log_level));
   }
-  RimeSetup(&rime_traits);
-  RimeInitialize(&rime_traits);
+  rime->setup(&rime_traits);
+  rime->initialize(&rime_traits);
   return NULL;
 }
 
 static napi_value createSession(napi_env env, napi_callback_info info) {
   napi_value result;
-  RimeSessionId session_id = RimeCreateSession();
+  RimeSessionId session_id = rime->create_session();
   if (session_id == 0) {
     napi_throw_error(env, NULL, "rime cannot create session");
     return NULL;
@@ -123,12 +121,12 @@ static napi_value destroySession(napi_env env, napi_callback_info info) {
   RimeSessionId session_id;
   SET_ARGV(env, argv);
   SET_SESSION_ID(env, argv[0], session_id);
-  if (!RimeDestroySession(session_id)) {
+  if (!rime->destroy_session(session_id)) {
     char str[DEFAULT_BUFFER_SIZE];
     sprintf(str, "cannot destroy session %ld", session_id);
     napi_throw_error(env, NULL, str);
   }
-  RimeFinalize();
+  rime->finalize();
   return NULL;
 }
 
@@ -138,7 +136,7 @@ static napi_value getCurrentSchema(napi_env env, napi_callback_info info) {
   char buffer[DEFAULT_BUFFER_SIZE];
   SET_ARGV(env, argv);
   SET_SESSION_ID(env, argv[0], session_id);
-  if (!RimeGetCurrentSchema(session_id, buffer, DEFAULT_BUFFER_SIZE)) {
+  if (!rime->get_current_schema(session_id, buffer, DEFAULT_BUFFER_SIZE)) {
     napi_throw_error(env, NULL, "cannot get current schema");
     return NULL;
   }
@@ -150,7 +148,7 @@ static napi_value getCurrentSchema(napi_env env, napi_callback_info info) {
 static napi_value getSchemaList(napi_env env, napi_callback_info info) {
   napi_value result;
   RimeSchemaList schema_list;
-  if (!RimeGetSchemaList(&schema_list)) {
+  if (!rime->get_schema_list(&schema_list)) {
     napi_throw_error(env, NULL, "cannot get schema list");
     return NULL;
   }
@@ -169,7 +167,7 @@ static napi_value getSchemaList(napi_env env, napi_callback_info info) {
     NODE_API_CALL(env, napi_set_named_property(env, element, "name", name));
     NODE_API_CALL(env, napi_set_element(env, result, i, element));
   }
-  RimeFreeSchemaList(&schema_list);
+  rime->free_schema_list(&schema_list);
   return result;
 }
 
@@ -180,7 +178,7 @@ static napi_value selectSchema(napi_env env, napi_callback_info info) {
   SET_ARGV(env, argv);
   SET_SESSION_ID(env, argv[0], session_id);
   SET_STRING(env, argv[1], schema_id);
-  if (!RimeSelectSchema(session_id, schema_id)) {
+  if (!rime->select_schema(session_id, schema_id)) {
     char str[DEFAULT_BUFFER_SIZE + sizeof("cannot select schema ")];
     sprintf(str, "cannot select schema %s", schema_id);
     napi_throw_error(env, NULL, str);
@@ -196,7 +194,7 @@ static napi_value processKey(napi_env env, napi_callback_info info) {
   SET_SESSION_ID(env, argv[0], session_id);
   NODE_API_CALL(env, napi_get_value_int32(env, argv[1], &keycode));
   NODE_API_CALL(env, napi_get_value_int32(env, argv[2], &mask));
-  if (!RimeProcessKey(session_id, keycode, mask)) {
+  if (!rime->process_key(session_id, keycode, mask)) {
     char str[DEFAULT_BUFFER_SIZE];
     sprintf(str, "cannot process key %d", keycode);
     napi_throw_error(env, NULL, str);
@@ -210,7 +208,7 @@ static napi_value getContext(napi_env env, napi_callback_info info) {
   SET_ARGV(env, argv);
   SET_SESSION_ID(env, argv[0], session_id);
   RIME_STRUCT(RimeContext, context);
-  if (!RimeGetContext(session_id, &context)) {
+  if (!rime->get_context(session_id, &context)) {
     napi_throw_error(env, NULL, "cannot get context");
     return NULL;
   }
@@ -308,7 +306,7 @@ static napi_value getContext(napi_env env, napi_callback_info info) {
       NODE_API_CALL(env, napi_set_element(env, select_keys, i, select_key));
     }
   }
-  if (!RimeFreeContext(&context))
+  if (!rime->free_context(&context))
     napi_throw_error(env, NULL, "cannot free context");
   return result;
 }
@@ -319,13 +317,13 @@ static napi_value getCommit(napi_env env, napi_callback_info info) {
   SET_ARGV(env, argv);
   SET_SESSION_ID(env, argv[0], session_id);
   RIME_STRUCT(RimeCommit, commit);
-  if (!RimeGetCommit(session_id, &commit))
+  if (!rime->get_commit(session_id, &commit))
     napi_throw_error(env, NULL, "cannot get commit");
   NODE_API_CALL(env, napi_create_object(env, &result));
   NODE_API_CALL(
       env, napi_create_string_utf8(env, commit.text, NAPI_AUTO_LENGTH, &text));
   NODE_API_CALL(env, napi_set_named_property(env, result, "text", text));
-  if (!RimeFreeCommit(&commit))
+  if (!rime->free_commit(&commit))
     napi_throw_error(env, NULL, "cannot free commit");
   return result;
 }
@@ -336,7 +334,7 @@ static napi_value commitComposition(napi_env env, napi_callback_info info) {
   SET_ARGV(env, argv);
   SET_SESSION_ID(env, argv[0], session_id);
   NODE_API_CALL(
-      env, napi_create_int32(env, RimeCommitComposition(session_id), &result));
+      env, napi_create_int32(env, rime->commit_composition(session_id), &result));
   return result;
 }
 
@@ -345,11 +343,12 @@ static napi_value clearComposition(napi_env env, napi_callback_info info) {
   RimeSessionId session_id;
   SET_ARGV(env, argv);
   SET_SESSION_ID(env, argv[0], session_id);
-  RimeClearComposition(session_id);
+  rime->clear_composition(session_id);
   return NULL;
 }
 
 NAPI_MODULE_INIT(/* napi_env env, napi_value exports */) {
+  rime = rime_get_api();
   char *names[] = {"init",
                    "createSession",
                    "destroySession",
