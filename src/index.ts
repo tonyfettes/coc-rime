@@ -18,7 +18,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
       rime.setSchema(userConfig.schemaId);
       schemaId = userConfig.schemaId;
     }
-    rime.getSchemaList().then((schemaList) => {
+    rime.get_schema_list().then((schemaList) => {
       statusBarItem.text =
         userConfig.shortcut +
         ' ' +

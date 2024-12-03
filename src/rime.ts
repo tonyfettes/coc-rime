@@ -21,7 +21,7 @@ export class Rime {
   constructor(traits: Traits, ui: UI) {
     this.ui = ui;
     binding.init(traits);
-    this.sessionId = binding.createSession();
+    this.sessionId = binding.create_session();
     for (const specialKey of specialKeys) {
       let keyname = specialKey.replace('Page', 'Page_');
       this.registerKeymap(keyname, []);
@@ -67,7 +67,7 @@ export class Rime {
   }
 
   destroy() {
-    binding.destroySession(this.sessionId);
+    binding.destroy_session(this.sessionId);
   }
 
   async setCompletionStatus(status: boolean): Promise<boolean> {
@@ -96,7 +96,7 @@ export class Rime {
     return this.isEnabled;
   }
 
-  async processKey(key: string, modifiers_: string[]): Promise<void> {
+  async process_key(key: string, modifiers_: string[]): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
       try {
         let sum = 0;
@@ -113,7 +113,7 @@ export class Rime {
           keycode = keys[key];
         }
         try {
-          binding.processKey(this.sessionId, keycode, sum);
+          binding.process_key(this.sessionId, keycode, sum);
         } catch (error) {
           reject(error);
         }
@@ -124,22 +124,22 @@ export class Rime {
     });
   }
 
-  async getContext(): Promise<Context> {
+  async get_context(): Promise<Context> {
     return new Promise<Context>((resolve, reject) => {
       try {
-        resolve(binding.getContext(this.sessionId));
+        resolve(binding.get_context(this.sessionId));
       } catch (e) {
         reject(e);
       }
     });
   }
 
-  async getCommit(): Promise<string> {
+  async get_commit(): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       try {
         let text = '';
-        if (binding.commitComposition(this.sessionId)) {
-          let commit: Commit = binding.getCommit(this.sessionId);
+        if (binding.commit_composition(this.sessionId)) {
+          let commit: Commit = binding.get_commit(this.sessionId);
           text = commit.text;
         }
         resolve(text);
@@ -149,10 +149,10 @@ export class Rime {
     });
   }
 
-  async clearComposition(): Promise<void> {
+  async clear_composition(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       try {
-        binding.clearComposition(this.sessionId);
+        binding.clear_composition(this.sessionId);
         resolve();
       } catch (e) {
         reject(e);
@@ -182,13 +182,13 @@ export class Rime {
 
   async drawUI(key: string, modifiers_: string[]): Promise<void> {
     try {
-      await this.processKey(key, modifiers_);
+      await this.process_key(key, modifiers_);
     } catch (e) {
       // don't output text when any control key is pressed
       if (modifiers_.length == 0) this.feedkeys(key);
       return;
     }
-    let context = await this.getContext();
+    let context = await this.get_context();
     this.preedit = context.composition.preedit ?? '';
     let preedit =
       this.preedit.slice(0, context.composition.cursor_pos) +
@@ -196,7 +196,7 @@ export class Rime {
       this.preedit.slice(context.composition.cursor_pos);
     let candidates = context.menu.candidates ?? [];
     if (context.menu.num_candidates === 0) {
-      let text = await this.getCommit();
+      let text = await this.get_commit();
       if (text !== '') {
         this.feedkeys(text);
         return;
@@ -491,7 +491,7 @@ export class Rime {
     workspace.registerAutocmd({
       event: ['InsertLeave', 'WinLeave'],
       callback: async () => {
-        this.clearComposition();
+        this.clear_composition();
         if (this.win && (await this.win.valid)) {
           await this.win.close(false);
           this.win = null;
@@ -546,14 +546,14 @@ export class Rime {
     return new Promise<Context>((resolve, reject) => {
       try {
         for (const singleChar of input) {
-          this.processKey(singleChar, []);
+          this.process_key(singleChar, []);
         }
-        let context = binding.getContext(this.sessionId);
+        let context = binding.get_context(this.sessionId);
         let result = context;
         if (input !== '')
           while (!context.menu.is_last_page) {
-            this.processKey('=', []);
-            context = binding.getContext(this.sessionId);
+            this.process_key('=', []);
+            context = binding.get_context(this.sessionId);
             result.menu.num_candidates += context.menu.num_candidates;
             if (result.menu?.select_keys && context.menu?.select_keys) {
               result.menu.select_keys.push(...context.menu.select_keys);
@@ -566,15 +566,15 @@ export class Rime {
       } catch (e) {
         reject(e);
       } finally {
-        binding.clearComposition(this.sessionId);
+        binding.clear_composition(this.sessionId);
       }
     });
   }
 
-  async getSchemaList(): Promise<Schema[]> {
+  async get_schema_list(): Promise<Schema[]> {
     return new Promise<Schema[]>((resolve, reject) => {
       try {
-        if (this.schemaList === undefined) this.schemaList = binding.getSchemaList();
+        if (this.schemaList === undefined) this.schemaList = binding.get_schema_list();
         resolve(this.schemaList);
       } catch (e) {
         reject(e);
@@ -585,7 +585,7 @@ export class Rime {
   async getSchema(): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       try {
-        if (this.schemaId === undefined) this.schemaId = binding.getCurrentSchema(this.sessionId);
+        if (this.schemaId === undefined) this.schemaId = binding.get_current_schema(this.sessionId);
         resolve(this.schemaId);
       } catch (e) {
         reject(e);
@@ -596,7 +596,7 @@ export class Rime {
   async setSchema(schemaId: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       try {
-        resolve(binding.selectSchema(this.sessionId, schemaId));
+        resolve(binding.select_schema(this.sessionId, schemaId));
         this.schemaId = schemaId;
       } catch (e) {
         reject(e);

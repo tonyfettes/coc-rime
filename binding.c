@@ -105,7 +105,7 @@ static napi_value init(napi_env env, napi_callback_info info) {
   return NULL;
 }
 
-static napi_value createSession(napi_env env, napi_callback_info info) {
+static napi_value create_session(napi_env env, napi_callback_info info) {
   napi_value result;
   RimeSessionId session_id = rime->create_session();
   if (session_id == 0) {
@@ -116,7 +116,7 @@ static napi_value createSession(napi_env env, napi_callback_info info) {
   return result;
 }
 
-static napi_value destroySession(napi_env env, napi_callback_info info) {
+static napi_value destroy_session(napi_env env, napi_callback_info info) {
   napi_value argv[1];
   RimeSessionId session_id;
   SET_ARGV(env, argv);
@@ -130,7 +130,7 @@ static napi_value destroySession(napi_env env, napi_callback_info info) {
   return NULL;
 }
 
-static napi_value getCurrentSchema(napi_env env, napi_callback_info info) {
+static napi_value get_current_schema(napi_env env, napi_callback_info info) {
   napi_value schema_id, argv[1];
   RimeSessionId session_id;
   char buffer[DEFAULT_BUFFER_SIZE];
@@ -145,7 +145,7 @@ static napi_value getCurrentSchema(napi_env env, napi_callback_info info) {
   return schema_id;
 }
 
-static napi_value getSchemaList(napi_env env, napi_callback_info info) {
+static napi_value get_schema_list(napi_env env, napi_callback_info info) {
   napi_value result;
   RimeSchemaList schema_list;
   if (!rime->get_schema_list(&schema_list)) {
@@ -171,7 +171,7 @@ static napi_value getSchemaList(napi_env env, napi_callback_info info) {
   return result;
 }
 
-static napi_value selectSchema(napi_env env, napi_callback_info info) {
+static napi_value select_schema(napi_env env, napi_callback_info info) {
   napi_value argv[2];
   RimeSessionId session_id;
   char schema_id[DEFAULT_BUFFER_SIZE];
@@ -186,7 +186,7 @@ static napi_value selectSchema(napi_env env, napi_callback_info info) {
   return NULL;
 }
 
-static napi_value processKey(napi_env env, napi_callback_info info) {
+static napi_value process_key(napi_env env, napi_callback_info info) {
   int keycode, mask;
   napi_value argv[3];
   RimeSessionId session_id;
@@ -202,7 +202,7 @@ static napi_value processKey(napi_env env, napi_callback_info info) {
   return NULL;
 }
 
-static napi_value getContext(napi_env env, napi_callback_info info) {
+static napi_value get_context(napi_env env, napi_callback_info info) {
   napi_value result, composition, menu, argv[1];
   RimeSessionId session_id;
   SET_ARGV(env, argv);
@@ -311,7 +311,7 @@ static napi_value getContext(napi_env env, napi_callback_info info) {
   return result;
 }
 
-static napi_value getCommit(napi_env env, napi_callback_info info) {
+static napi_value get_commit(napi_env env, napi_callback_info info) {
   napi_value result, text, argv[1];
   RimeSessionId session_id;
   SET_ARGV(env, argv);
@@ -328,7 +328,7 @@ static napi_value getCommit(napi_env env, napi_callback_info info) {
   return result;
 }
 
-static napi_value commitComposition(napi_env env, napi_callback_info info) {
+static napi_value commit_composition(napi_env env, napi_callback_info info) {
   napi_value result, argv[1];
   RimeSessionId session_id;
   SET_ARGV(env, argv);
@@ -338,7 +338,7 @@ static napi_value commitComposition(napi_env env, napi_callback_info info) {
   return result;
 }
 
-static napi_value clearComposition(napi_env env, napi_callback_info info) {
+static napi_value clear_composition(napi_env env, napi_callback_info info) {
   napi_value argv[1];
   RimeSessionId session_id;
   SET_ARGV(env, argv);
@@ -350,20 +350,20 @@ static napi_value clearComposition(napi_env env, napi_callback_info info) {
 NAPI_MODULE_INIT(/* napi_env env, napi_value exports */) {
   rime = rime_get_api();
   char *names[] = {"init",
-                   "createSession",
-                   "destroySession",
-                   "getCurrentSchema",
-                   "getSchemaList",
-                   "selectSchema",
-                   "processKey",
-                   "getContext",
-                   "getCommit",
-                   "commitComposition",
-                   "clearComposition"};
+                   "create_session",
+                   "destroy_session",
+                   "get_current_schema",
+                   "get_schema_list",
+                   "select_schema",
+                   "process_key",
+                   "get_context",
+                   "get_commit",
+                   "commit_composition",
+                   "clear_composition"};
   napi_callback callbacks[] = {
-      init,          createSession,     destroySession,  getCurrentSchema,
-      getSchemaList, selectSchema,      processKey,      getContext,
-      getCommit,     commitComposition, clearComposition};
+      init,          create_session,     destroy_session,  get_current_schema,
+      get_schema_list, select_schema,      process_key,      get_context,
+      get_commit,     commit_composition, clear_composition};
   napi_value functions[sizeof(names) / sizeof(names[0])];
   for (size_t i = 0; i < sizeof(names) / sizeof(names[0]); i++) {
     NODE_API_CALL(env, napi_create_function(env, names[i], NAPI_AUTO_LENGTH,

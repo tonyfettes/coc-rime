@@ -32,7 +32,7 @@ export default class SchemaList extends BasicList {
           console.log(`Error get current schema: ${e}`);
           window.showMessage(`Get current schema failed.`);
         });
-      this.rime.getSchemaList().then((schema_list) => {
+      this.rime.get_schema_list().then((schema_list) => {
         if (schemaId !== undefined) {
           statusBarItem.text =
             shortcut +
@@ -47,7 +47,7 @@ export default class SchemaList extends BasicList {
 
   public async loadItems(_context: ListContext): Promise<ListItem[] | null> {
     return new Promise<ListItem[] | null>((resolve, _) => {
-      this.rime.getSchemaList().then((res) => {
+      this.rime.get_schema_list().then((res) => {
         let listItems: ListItem[] = res.map((schema) => {
           return {
             label: schema.name + ': ' + schema.schema_id,
