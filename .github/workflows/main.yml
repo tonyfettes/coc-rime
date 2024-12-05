@@ -28,14 +28,14 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get -y update
-          sudo apt-get -y install librime-dev libjson-c-dev librime1 libjson-c5
-          yarn
+          sudo apt-get -y install librime-dev librime1
       - name: Build
         run: |
+          yarn
           yarn pack
         env:
           NODE_ENV: production
-      - uses: softprops/action-gh-release@v1
+      - uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: '*.tgz'
