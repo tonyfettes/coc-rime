@@ -13,7 +13,7 @@
     "coc": "^0.0.80"
   },
   "scripts": {
-    "install": "node-gyp clean && node-gyp configure -- -fcompile_commands_json && ln -s Release/compile_commands.json build && node-gyp configure -- -fmake && make -Cbuild",
+    "install": "node-gyp-build && node-gyp configure -- -fcompile_commands_json && ln -s Release/compile_commands.json build",
     "lint": "eslint src --ext ts",
     "clean": "rimraf lib",
     "watch": "node esbuild.js --watch",
