@@ -9,16 +9,13 @@
                 "binding.cc",
             ],
             "include_dirs": [
-                "<!@(node -p \"require('node-addon-api').include\")"
-                # gyp scan header files in macos
+                "<!@(node -p \"require('node-addon-api').include\")",
+                # https://github.com/nodejs/gyp-next/issues/273
                 "<!@(pkg-config --variable=includedir rime)",
             ],
             "defines": [
                 "NAPI_DISABLE_CPP_EXCEPTIONS",
                 "NODE_ADDON_API_DISABLE_DEPRECATED",
-            ],
-            "cflags": [
-                "<!@(pkg-config --cflags rime)",
             ],
             "ldflags": [
                 "<!@(pkg-config --libs rime)",
