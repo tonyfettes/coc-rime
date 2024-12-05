@@ -146,7 +146,7 @@ public:
     result.Set("select_keys", menu.select_keys ? menu.select_keys : "");
     Array candidates = Array::New(env, menu.num_candidates);
     for (int i = 0; i < menu.num_candidates; i++) {
-      HandleScope scope(info.Env());
+      HandleScope scope(env);
       candidates.Set(i, Candidate::New(env, menu.candidates[i]));
     }
     result.Set("candidates", candidates);
