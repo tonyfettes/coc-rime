@@ -10,6 +10,8 @@
             ],
             "include_dirs": [
                 "<!@(node -p \"require('node-addon-api').include\")"
+                # gyp scan header files in macos
+                "<!@(pkg-config --variable=includedir rime)",
             ],
             "defines": [
                 "NAPI_DISABLE_CPP_EXCEPTIONS",
