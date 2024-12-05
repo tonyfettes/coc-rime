@@ -2,7 +2,7 @@
 #include <rime_api.h>
 
 using Napi::Addon, Napi::Env, Napi::CallbackInfo, Napi::Value, Napi::Object,
-    Napi::Array, Napi::String, Napi::Number, Napi::Boolean;
+    Napi::Array, Napi::String, Napi::Number, Napi::Boolean, Napi::HandleScope;
 
 #define DEFAULT_BUFFER_SIZE 1024
 
@@ -145,8 +145,10 @@ public:
     result.Set("num_candidates", menu.num_candidates);
     result.Set("select_keys", menu.select_keys ? menu.select_keys : "");
     Array candidates = Array::New(env, menu.num_candidates);
-    for (int i = 0; i < menu.num_candidates; i++)
+    for (int i = 0; i < menu.num_candidates; i++) {
+      HandleScope scope(info.Env());
       candidates.Set(i, Candidate::New(env, menu.candidates[i]));
+    }
     result.Set("candidates", candidates);
     return result;
   }
@@ -256,6 +258,7 @@ protected:
       return info.Env().Null();
     Array result = Array::New(info.Env(), schema_list.size);
     for (unsigned long i = 0; i < schema_list.size; i++) {
+      HandleScope scope(info.Env());
       SchemaListItem schema =
           SchemaListItem::New(info.Env(), schema_list.list[i]);
       result.Set(i, schema);
