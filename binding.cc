@@ -51,9 +51,9 @@ public:
     this->_traits.min_log_level = this->min_log_level;
     return this->_traits;
   };
-  const char *shared_data_dir = "/run/current-system/sw/share/rime-data";
-  const char *user_data_dir = "/home/wzy/.config/ibus/rime";
-  const char *log_dir = "/home/wzy/.config/coc/extensions/coc-rime-data";
+  const char *shared_data_dir = "/usr/share/rime-data";
+  const char *user_data_dir = "/root/.config/ibus/rime";
+  const char *log_dir = "/root/.config/coc/extensions/coc-rime-data";
   const char *distribution_name = "Rime";
   const char *distribution_code_name = "rime.coc-rime";
   const char *distribution_version = "0.0.1";
