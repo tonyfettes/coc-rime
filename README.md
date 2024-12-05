@@ -13,24 +13,29 @@ Rime input method integration of coc.nvim
 
 ## Dependencies
 
-- [rime](https://rime.im/)
+- [librime](https://github.com/rime/librime)
+
+For build, need extra them:
+
 - [pkg-config](http://pkg-config.freedesktop.org/)
+- [python](https://github.com/python/cpython): gyp is written in it
+- make: gyp generates Makefile
 
 ```sh
 # Ubuntu
-sudo apt-get -y install pkg-config librime-dev librime1
-sudo apt-mark auto librime-dev pkg-config
+sudo apt-get -y install pkg-config librime-dev librime1 ninja
+sudo apt-mark auto librime-dev pkg-config ninja
 # ArchLinux
-sudo pacman -S pkg-config librime
+sudo pacman -S pkg-config librime ninja
 # Android Termux
-apt-get -y install pkg-config librime
+apt-get -y install pkg-config librime ninja
 # Nix
 # without any extra operation
 # homebrew
 brew tap tonyfettes/homebrew-rime
-brew install pkg-config librime
+brew install pkg-config librime ninja
 # Windows msys2
-pacboy -S --noconfirm pkg-config librime gcc
+pacboy -S --noconfirm pkg-config librime gcc ninja
 ```
 
 ## Install
