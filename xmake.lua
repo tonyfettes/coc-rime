@@ -21,16 +21,10 @@ do
             target:set("kind", "shared")
         end
 
-        -- set library name
-        local modulename = target:name():split('.', { plain = true })
-        modulename = modulename[#modulename]
-        target:set("filename", modulename .. ".node")
-
         -- export symbols
         if target:is_plat("windows") then
-            local exported_name = target:name():gsub("%.", "_")
-            exported_name = exported_name:match('^[^%-]+%-(.+)$') or exported_name
-            target:add("shflags", "/export:napi_register_module_v1", { force = true })
+            target:add("shflags", "/export:napi_register_module_v1", "/export:node_api_module_get_api_version_v1",
+                { force = true })
         else
             target:set("symbols", "none")
         end
@@ -45,6 +39,11 @@ do
             end
             target:add("files", outputdir .. "/node_api.c")
         end
+
+        -- set library name
+        local modulename = target:name():split('.', { plain = true })
+        modulename = modulename[#modulename]
+        target:set("filename", modulename .. ".node")
 
         -- add node library
         local has_node = false
@@ -74,14 +73,9 @@ do
         import("target.action.install")(target, {
             installdir = installdir,
             libdir = moduledir,
-            bindir = path.join("lib", moduledir),
+            bindir = moduledir,
             includedir = path.join("include", moduledir)
         })
-        if is_plat("mingw") then
-            local modulename = target:name():split('.', { plain = true })
-            modulename = modulename[#modulename]
-            os.mv(installdir .. "/" .. modulename .. ".dll.a", installdir .. "/" .. modulename .. ".node")
-        end
     end)
 end
 
