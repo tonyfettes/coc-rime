@@ -1,19 +1,20 @@
 import { existsSync } from 'fs';
 import { resolve } from 'path';
-import { default as build } from 'node-gyp-build';
+import { default as build, Options } from 'pkg-prebuilds';
 import { execSync } from 'child_process';
 
+let options: Options = { name: 'rime', napi_versions: [7] };
 let binding;
 const root = resolve(__dirname, '..');
 try {
-  binding = build(root);
+  binding = build(root, options);
 } catch (e) {
   let cmd = 'npm rebuild';
   if (existsSync('/run/current-system/nixos-version')) {
     cmd = `nix-shell --pure --run "${cmd}"`;
   }
   execSync(cmd, { cwd: resolve(__dirname, '..') });
-  binding = build(root);
+  binding = build(root, options);
 }
 export default binding;
 
