@@ -37,7 +37,7 @@ do
                 import("devel.git")
                 git.clone("https://github.com/napi-bindings/node-api-stub", { depth = 1, outputdir = outputdir })
             end
-            target:add("files", outputdir .. "/node_api.c")
+            target:add("files", path.join(outputdir, "node_api.c"))
         end
 
         -- set library name
