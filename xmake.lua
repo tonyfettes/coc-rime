@@ -32,7 +32,7 @@ do
         -- https://github.com/nodejs/node-addon-api/issues/1021
         if is_plat("mingw") then
             import("core.project.config")
-            local outputdir = config.get("buildir") .. "/node-api-stub"
+            local outputdir = path.join(config.get("buildir"), "/node-api-stub")
             if not os.isdir(outputdir) then
                 import("devel.git")
                 git.clone("https://github.com/napi-bindings/node-api-stub", { depth = 1, outputdir = outputdir })
@@ -69,7 +69,7 @@ do
             target:set("kind", "shared")
         end
         local moduledir = path.directory((target:name():gsub('%.', '/')))
-        local installdir = "build/" .. get_config("mode")
+        local installdir = path.join("build", get_config("mode"))
         import("target.action.install")(target, {
             installdir = installdir,
             libdir = moduledir,
