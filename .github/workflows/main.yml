@@ -58,22 +58,14 @@ jobs:
           sudo add-apt-repository ppa:xmake-io/xmake
           sudo apt-get -y update
           sudo apt-get -y install librime-dev librime1 xmake
-      - uses: cachix/install-nix-action@v24
-        if: runner.os == 'macOS'
-        with:
-          nix_path: nixpkgs=channel:nixpkgs-unstable
-          extra_nix_config: |
-            experimental-features = nix-command flakes
-            access-tokens = github.com=${{secrets.GITHUB_TOKEN}}
       - name: Install dependencies
         if: runner.os == 'macOS'
         run: |
-          nix-env -if'<nixpkgs>' librime xmake
-          echo "$HOME/.nix-profile/bin" >> "${GITHUB_PATH}"
+          brew install librime xmake
       - name: Build
         run: |
-          PKG_CONFIG_PATH="$HOME/.nix-profile/lib/pkgconfig" yarn install
-          PKG_CONFIG_PATH="$HOME/.nix-profile/lib/pkgconfig" yarn pack
+          yarn install
+          yarn pack
         env:
           NODE_ENV: production
       - uses: actions/upload-artifact@v4
