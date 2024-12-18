@@ -728,8 +728,6 @@ __metadata:
     eslint-config-prettier: "npm:^7.1.0"
     eslint-plugin-prettier: "npm:^3.1.4"
     mkdirp: "npm:^0.5.1"
-    node-addon-api: "npm:^8.1.0"
-    node-api-headers: "npm:^1.4.0"
     npm-run-all: "npm:^4.1.5"
     pkg-prebuilds: "npm:^1.0.0"
     prettier: "npm:^2.2.0"
@@ -2344,42 +2342,6 @@ __metadata:
   version: 1.0.5
   resolution: "nice-try@npm:1.0.5"
   checksum: 10c0/95568c1b73e1d0d4069a3e3061a2102d854513d37bcfda73300015b7ba4868d3b27c198d1dbbd8ebdef4112fc2ed9e895d4a0f2e1cce0bd334f2a1346dc9205f
-  languageName: node
-  linkType: hard
-
-"node-addon-api@npm:^8.1.0":
-  version: 8.3.0
-  resolution: "node-addon-api@npm:8.3.0"
-  dependencies:
-    node-gyp: "npm:latest"
-  checksum: 10c0/0ed4206cb68921b33fc637c6f7ffcb91fcde85aea88ea60fadb7b0537bf177226a5600584eac9db2aff93600041d42796fb20576b3299b9be6ff7539592b2180
-  languageName: node
-  linkType: hard
-
-"node-api-headers@npm:^1.4.0":
-  version: 1.4.0
-  resolution: "node-api-headers@npm:1.4.0"
-  checksum: 10c0/c132b7bf33e97362eae00b74246a41f64ec919444e1a6c7a1b62dac7c39b77b6d31b82d591f4462d2d2c5331ef3a52695ae01376f63c8edc2f83c2c5bacd20f6
-  languageName: node
-  linkType: hard
-
-"node-gyp@npm:latest":
-  version: 10.3.1
-  resolution: "node-gyp@npm:10.3.1"
-  dependencies:
-    env-paths: "npm:^2.2.0"
-    exponential-backoff: "npm:^3.1.1"
-    glob: "npm:^10.3.10"
-    graceful-fs: "npm:^4.2.6"
-    make-fetch-happen: "npm:^13.0.0"
-    nopt: "npm:^7.0.0"
-    proc-log: "npm:^4.1.0"
-    semver: "npm:^7.3.5"
-    tar: "npm:^6.2.1"
-    which: "npm:^4.0.0"
-  bin:
-    node-gyp: bin/node-gyp.js
-  checksum: 10c0/87c3b50e1f6f5256b5d2879a8c064eefa53ed444bad2a20870be43bc189db7cbffe22c30af056046c6d904181d73881b1726fd391d2f6f79f89b991019f195ea
   languageName: node
   linkType: hard
 
