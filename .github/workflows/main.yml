@@ -46,7 +46,7 @@ jobs:
         run: |
           corepack enable
       - uses: actions/setup-node@v4
-        # if use cmd, not msys2
+        # it uses cmd on windows, not msys2
         if: runner.os != 'Windows'
         with:
           node-version: latest
