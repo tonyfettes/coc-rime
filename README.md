@@ -89,38 +89,4 @@ MIT
 
 ## Related Projects
 
-### IM for vim
-
-#### Pure vim
-
-- [VimIM](https://github.com/vim-scripts/VimIM): Stop maintenance
-
-#### [ibus](https://github.com/ibus/ibus)
-
-- [vim-xkbswitch](https://github.com/lyokha/vim-xkbswitch)
-
-#### [fcitx5](https://github.com/fcitx/fcitx5)
-
-- [fcitx.vim](https://github.com/lilydjwg/fcitx.vim)
-- [fcitx5.nvim](https://github.com/tonyfettes/fcitx5.nvim)
-- [fcitx5-ui.nvim](https://github.com/black-desk/fcitx5-ui.nvim)
-
-#### [rime](https://github.com/rime/librime)
-
-- [cmp-rime](https://github.com/Ninlives/cmp-rime)
-
-本项目希望为不可能使用输入法的环境中提供必要的中文支持：
-
-- 文本终端。例如在构建 Linux 时添加
-  [cjktty-patches](https://github.com/zhmars/cjktty-patches)
-  可以在文本终端显示中文，但在不使用 [fbterm](https://github.com/sfzhi/fbterm)
-  时缺乏输入中文的方法。
-- Android 。受限于 Android 权限机制，不可能在
-  [termux](https://github.com/termux/termux-app) 中获取输入法 APP
-  的状态以实现：
-  - 退出插入模式时恢复英文输入模式
-  - 进入插入模式时恢复上一次退出插入模式时的中、英文输入模式
-
-### Rime frontends
-
-See [here](https://github.com/osfans/trime/wiki/Rime%E5%89%8D%E7%AB%AF%E6%B1%87%E6%80%BB).
+- [rime.nvim](https://github.com/Freed-Wu/rime.nvim): lua implementation
