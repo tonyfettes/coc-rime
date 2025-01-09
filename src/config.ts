@@ -6,7 +6,7 @@ async function get_dir(...dirs: string[]): Promise<string> {
   for (const dir of dirs) {
     try {
       return await realpath(eval('`' + dir + '`'));
-    } catch (e) {}
+    } catch (_e) {}
   }
   return '';
 }
@@ -52,11 +52,11 @@ export class Config {
         // In Android, an ::__fs::filesystem::filesystem_error will be threw
         try {
           await mkdir(log_dir);
-        } catch (e) {}
+        } catch (_e) {}
       }
       if (typeof shared_data_dir === 'object') shared_data_dir = await get_dir(...shared_data_dir);
       if (typeof user_data_dir === 'object') user_data_dir = await get_dir(...user_data_dir);
-      let traits = {
+      const traits = {
         shared_data_dir: shared_data_dir,
         user_data_dir: user_data_dir,
         log_dir: log_dir,

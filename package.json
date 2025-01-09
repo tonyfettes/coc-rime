@@ -5,38 +5,25 @@
   "author": "Tony Fettes <feihaoxiang2014@gmail.com>",
   "license": "MIT",
   "main": "lib/index.js",
-  "keywords": [
-    "coc.nvim",
-    "rime"
-  ],
+  "keywords": ["coc.nvim", "rime"],
   "engines": {
     "coc": "^0.0.80"
   },
   "scripts": {
-    "lint": "eslint src --ext ts",
+    "lint": "biome lint",
     "clean": "rimraf lib",
     "watch": "node esbuild.js --watch",
     "prepack": "xmake -y && xmake install && pkg-prebuilds-copy --baseDir build/release --source rime.node --name=rime --strip --napi_version=7 && node esbuild.js",
     "prepare": "npm-run-all clean prepack"
   },
-  "prettier": {
-    "singleQuote": true,
-    "printWidth": 120,
-    "semi": true
-  },
   "devDependencies": {
     "@types/mkdirp": "^0.5.2",
-    "@typescript-eslint/eslint-plugin": "^4.8.2",
-    "@typescript-eslint/parser": "^4.8.2",
+    "biome": "^0.3.3",
     "coc.nvim": "^0.0.80",
     "esbuild": "^0.20.2",
-    "eslint": "^7.14.0",
-    "eslint-config-prettier": "^7.1.0",
-    "eslint-plugin-prettier": "^3.1.4",
     "mkdirp": "^0.5.1",
     "npm-run-all": "^4.1.5",
     "pkg-prebuilds": "^1.0.0",
-    "prettier": "^2.2.0",
     "rimraf": "^5.0.5",
     "typescript": "^4.1.2",
     "vscode-languageserver-protocol": "^3.14.1",
@@ -44,9 +31,7 @@
     "vscode-languageserver-types": "^3.14.0",
     "xmake-build-system": "2.9.7"
   },
-  "activationEvents": [
-    "*"
-  ],
+  "activationEvents": ["*"],
   "contributes": {
     "configuration": {
       "type": "object",
@@ -74,10 +59,7 @@
         "rime.traits.shared_data_dir": {
           "oneOf": [
             {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": ["string", "null"]
             },
             {
               "type": "array",
@@ -97,10 +79,7 @@
         "rime.traits.user_data_dir": {
           "oneOf": [
             {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": ["string", "null"]
             },
             {
               "type": "array",
@@ -118,18 +97,12 @@
           "description": "user data directory of rime. `null` will not use user data (just use shared data)"
         },
         "rime.traits.log_dir": {
-          "type": [
-            "string",
-            "null"
-          ],
+          "type": ["string", "null"],
           "default": "",
           "description": "log directory of rime. By default, it will be `~/.config/coc/extensions/coc-rime-data`. `null` will disable logging"
         },
         "rime.traits.distribution_name": {
-          "type": [
-            "string",
-            "null"
-          ],
+          "type": ["string", "null"],
           "default": "Rime"
         },
         "rime.traits.distribution_code_name": {
@@ -141,21 +114,13 @@
           "default": "0.1.3"
         },
         "rime.traits.app_name": {
-          "type": [
-            "string",
-            "null"
-          ],
+          "type": ["string", "null"],
           "default": "rime.coc-rime",
           "description": "Pass a C-string constant in the format \"rime.x\" where 'x' is the name of your application. Add prefix \"rime.\" to ensure old log files are automatically cleaned."
         },
         "rime.traits.min_log_level": {
           "type": "integer",
-          "enum": [
-            0,
-            1,
-            2,
-            3
-          ],
+          "enum": [0, 1, 2, 3],
           "default": 3,
           "description": "Minimal level of logged messages. Value is passed to Glog library using FLAGS_minloglevel variable. 0 = INFO (default), 1 = WARNING, 2 = ERROR, 3 = FATAL"
         },
@@ -164,18 +129,7 @@
           "items": {
             "type": "string"
           },
-          "default": [
-            "①",
-            "②",
-            "③",
-            "④",
-            "⑤",
-            "⑥",
-            "⑦",
-            "⑧",
-            "⑨",
-            "⓪"
-          ],
+          "default": ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⓪"],
           "description": "indices for IME"
         },
         "rime.ui.left": {

@@ -108,7 +108,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
             let offset = document.offsetAt(position);
             if (offset !== 0 && rime.getCompletionStatus()) {
               let inputString = '';
-              let inputRange: Range = { start: position, end: position };
+              const inputRange: Range = { start: position, end: position };
               const getPrevSingleChar = (offset: number): string => {
                 return document.getText({
                   start: document.positionAt(offset - 1),
@@ -117,7 +117,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
               };
               let singleChar = getPrevSingleChar(offset);
               if (punctMap.has(singleChar)) {
-                let punctResponse = emptyResponse;
+                const punctResponse = emptyResponse;
                 for (const fullWidthPunct of punctMap.get(singleChar)) {
                   punctResponse.items.push({
                     label: fullWidthPunct,

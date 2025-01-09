@@ -48,7 +48,7 @@ export default class SchemaList extends BasicList {
   public async loadItems(_context: ListContext): Promise<ListItem[] | null> {
     return new Promise<ListItem[] | null>((resolve, _) => {
       this.rime.get_schema_list().then((res) => {
-        let listItems: ListItem[] = res.map((schema) => {
+        const listItems: ListItem[] = res.map((schema) => {
           return {
             label: schema.name + ': ' + schema.schema_id,
             filterText: schema.name + schema.schema_id,
