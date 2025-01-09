@@ -40,7 +40,7 @@ jobs:
         run: |
           pacman -Sy --noconfirm mingw-w64-x86_64-pkg-config \
             mingw-w64-x86_64-librime mingw-w64-x86_64-nodejs \
-            mingw-w64-x86_64-gcc mingw-w64-x86_64-xmake git
+            mingw-w64-x86_64-gcc git
           ln -s c++ /mingw64/bin/cxx
       - name: Enable corepack
         run: |
@@ -55,13 +55,12 @@ jobs:
       - name: Install dependencies
         if: runner.os == 'Linux'
         run: |
-          sudo add-apt-repository ppa:xmake-io/xmake
           sudo apt-get -y update
-          sudo apt-get -y install librime-dev librime1 xmake
+          sudo apt-get -y install librime-dev librime1
       - name: Install dependencies
         if: runner.os == 'macOS'
         run: |
-          brew install librime xmake
+          brew install librime
       - name: Build
         run: |
           yarn install
