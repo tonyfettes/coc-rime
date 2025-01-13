@@ -13,7 +13,7 @@
     "lint": "biome lint",
     "clean": "rimraf lib",
     "watch": "node esbuild.js --watch",
-    "prepack": "xmake -y && xmake install && pkg-prebuilds-copy --baseDir build/release --source rime.node --name=rime --strip --napi_version=7 && node esbuild.js",
+    "prepack": "xmake -y && xmake install && pkg-prebuilds-copy --baseDir build/Release --source rime.node --name=rime --strip --napi_version=7 && node esbuild.js",
     "prepare": "npm-run-all clean prepack"
   },
   "devDependencies": {
